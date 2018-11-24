@@ -1,0 +1,120 @@
+/*
+ * Copyright(c) 2018, CSS
+ */
+
+/* @Global 常用标签_@Start */
+/*   */
+body, div, span, header, footer, nav, section, aside, article, ul, ol, dl, dt, dd, li, a, p, h1, h2, h3, h4,h5, h6, i, em, dfn, b, strong, textarea, figure, figcaption, form, fieldset, table, tr, th, td, img, button, input, select {
+	padding: 0;
+	margin: 0;
+	border: none;
+	color: #333333;
+	font-size: 14px;
+	font-style: normal;
+	font-weight: normal;
+	list-style: none;
+	text-decoration: none;
+	font-family: "Microsoft Yahei",sans-serif;
+	-webkit-tap-highlight-color: transparent;
+	-webkit-font-smoothing: antialiased;
+	&:focus {
+			outline: none;
+	}
+}
+
+table {
+	border-collapse: collapse;
+}
+
+button {
+	text-align: center;
+	border: none;
+}
+
+input, select {
+	vertical-align: middle;
+}
+
+/*
+ * 标签属性
+ * @overlay textarea,input
+ * @desc 强制输入时内容超出时换行
+ */
+textarea, input {
+	word-wrap: break-word;
+	word-break: break-all;
+	border: none;
+	font: 14px/1 '微软雅黑',Arial;
+	color: #333;
+	resize: none;
+	outline: none;
+	background: none;
+}
+
+hr {
+	height: 0px;
+	border-top: 1px solid #DDDDDD;
+	border-bottom: 1px solid #FFFFFF;
+	z-index: 1;
+}
+
+/*
+ * 定义图片边框
+ * @overlay img
+ * @desc	当图片作为链接内容被填充时，会有默认边框出现，重定义掉
+ */
+img {
+	border: 0 none;
+	vertical-align: top;
+}
+
+/*
+ * 定义默认的链接样式
+ * @overlay a
+ * @desc	仅仅是作为默认样式提供，可以在各自的实例中覆盖掉
+ */
+ a {
+	 outline: none;
+ }
+ a:link, a:visited {
+	color:#888888;
+	text-decoration: none;
+}
+a:hover {
+	color:#41a8f7;
+	text-decoration: none;
+}
+
+/*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
+/* ::-webkit-scrollbar {
+	width: 0px;
+	height: 0px;
+	background-color: #F5F5F5;
+} */
+
+/*定义滚动条轨道 内阴影+圆角*/
+/* ::-webkit-scrollbar-track {
+	-webkit-box-shadow: inset 0 0 1px rgba(0,0,0,0);
+	border-radius: 10px;
+	background-color: #F5F5F5;
+} */
+
+/*定义滑块 内阴影+圆角*/
+/* ::-webkit-scrollbar-thumb {
+	border-radius: 10px;
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+	background-color: #555;
+} */
+
+input[type="button"], input[type="submit"], input[type="search"], input[type="reset"] {
+	-webkit-appearance: none;
+}
+
+textarea {
+	-webkit-appearance: none;
+}
+
+/* @Global 常用标签_@end */
+
+
+
