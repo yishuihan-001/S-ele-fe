@@ -1,6 +1,42 @@
 @c-blue: #3190e8;
+@c-redyellow: #ff6700;
+@c-green: #4cd964;
 
+.wh(@w: 0.2rem, @h: @w) {
+  width: @w;
+  height: @h;
+}
 
+.bg(@b: @c-blue){
+  background: @b;
+}
 
+.hlh(@h, @lh: @h){
+  height: @h;
+  line-height: @lh;
+}
 
+.ellipsis{
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
 
+.border(@t, @c, @s, @r: @s, @b: @s, @l: @s){
+  border-top: @s @t @c;
+  border-right: @r @t @c;
+  border-bottom: @b @t @c;
+  border-left: @l @t @c;
+}
+
+.flex{
+  display: flex;
+	flex-flow: row nowrap;
+	justify-content: center;
+	align-items: center;
+}
+
+.disib{
+  display: inline-block;
+  vertical-align: top;
+}

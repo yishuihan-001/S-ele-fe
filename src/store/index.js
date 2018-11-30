@@ -6,7 +6,8 @@ Vue.use(Vuex)
 
 const state = {
   userInfo: null,
-  isLogin: false
+  isLogin: false,
+  placeholderImg: 'http://f0.jmstatic.com/btstatic/h5/index/bg_logo_1_1.jpg'
 }
 
 const mutations = {

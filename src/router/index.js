@@ -8,6 +8,11 @@ const city = r => require.ensure([], () => r(require('../page/city/city')), 'cit
 const msite = r => require.ensure([], () => r(require('../page/msite/msite')), 'msite')
 const food = r => require.ensure([], () => r(require('../page/food/food')), 'food')
 const search = r => require.ensure([], () => r(require('../page/search/search')), 'search')
+const shop = r => require.ensure([], () => r(require('../page/shop/shop')), 'shop')
+const foodDetail = r => require.ensure([], () => r(require('../page/shop/children/foodDetail')), 'foodDetail')
+const shopDetail = r => require.ensure([], () => r(require('../page/shop/children/shopDetail')), 'shopDetail')
+const shopSafe = r => require.ensure([], () => r(require('../page/shop/children/children/shopSafe')), 'shopSafe')
+const confirmOrder = r => require.ensure([], () => r(require('../page/confirmOrder/confirmOrder')), 'confirmOrder')
 
 const routes = [
   // 地址为空时跳转home页面
@@ -39,8 +44,34 @@ const routes = [
   },
   // 搜索页
   {
-    path: '/search/:geohash',
+    path: '/search',
     component: search
+  },
+  // 商铺页
+  {
+    path: '/shop',
+    component: shop,
+    children: [
+      {
+        path: 'foodDetail',
+        component: foodDetail
+      },
+      {
+        path: 'shopDetail',
+        component: shopDetail,
+        children: [
+          {
+            path: 'shopSafe',
+            component: shopSafe
+          }
+        ]
+      }
+    ]
+  },
+  // 订单确认页
+  {
+    path: '/confirmOrder',
+    component: confirmOrder
   }
 ]
 

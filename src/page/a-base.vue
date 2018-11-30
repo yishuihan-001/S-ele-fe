@@ -33,6 +33,8 @@ export default {
 </script>
 
 <style lang="less" scoped>
+  @import url("../../../lib/style/util");
+
   .demo {
     background: #000;
   }

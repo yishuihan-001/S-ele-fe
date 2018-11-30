@@ -3,8 +3,10 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import '../lib/js/rem'
-import Icon from 'vue-svg-icon/Icon.vue'
-Vue.component('icon', Icon)
+import './svg'
+import Mint from 'mint-ui'
+import 'mint-ui/lib/style.css'
+Vue.use(Mint)
 
 Vue.config.productionTip = false
 
