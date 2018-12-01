@@ -13,6 +13,9 @@ const foodDetail = r => require.ensure([], () => r(require('../page/shop/childre
 const shopDetail = r => require.ensure([], () => r(require('../page/shop/children/shopDetail')), 'shopDetail')
 const shopSafe = r => require.ensure([], () => r(require('../page/shop/children/children/shopSafe')), 'shopSafe')
 const confirmOrder = r => require.ensure([], () => r(require('../page/confirmOrder/confirmOrder')), 'confirmOrder')
+const remark = r => require.ensure([], () => r(require('../page/confirmOrder/children/remark')), 'remark')
+const invoice = r => require.ensure([], () => r(require('../page/confirmOrder/children/invoice')), 'invoice')
+const payment = r => require.ensure([], () => r(require('../page/confirmOrder/children/payment')), 'payment')
 
 const routes = [
   // 地址为空时跳转home页面
@@ -53,15 +56,15 @@ const routes = [
     component: shop,
     children: [
       {
-        path: 'foodDetail',
+        path: 'foodDetail', // 食品详情页
         component: foodDetail
       },
       {
-        path: 'shopDetail',
+        path: 'shopDetail', // 商铺详情页
         component: shopDetail,
         children: [
           {
-            path: 'shopSafe',
+            path: 'shopSafe', // 商铺安全认证页
             component: shopSafe
           }
         ]
@@ -71,7 +74,21 @@ const routes = [
   // 订单确认页
   {
     path: '/confirmOrder',
-    component: confirmOrder
+    component: confirmOrder,
+    children: [
+      {
+        path: 'remark', // 订单备注页
+        component: remark
+      },
+      {
+        path: 'invoice', // 发票抬头
+        component: invoice
+      },
+      {
+        path: 'payment', // 付款页面
+        component: payment
+      }
+    ]
   }
 ]
 

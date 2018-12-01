@@ -27,7 +27,64 @@
           <p><span>蜂鸟专送</span></p>
         </div>
       </div>
+
+      <div class="c-pay">
+        <p @click="showPayType=true"><span>支付方式</span><dfn class="flex"><em class="flex">在线支付</em><i class="flex"><SvgIcon class="icon-style" iconName="arrow-right" /></i></dfn></p>
+        <p><span>红包</span><dfn><em>暂时只在饿了么 APP 中支持</em></dfn></p>
+      </div>
+
+      <div class="c-order bf">
+        <div class="co-title">
+          <i><img :src="$store.state.placeholderImg" alt=""></i>
+          <span class="f18">效果演示</span>
+        </div>
+
+        <ul>
+          <li><i>ussss</i><em>X8</em><dfn>¥20</dfn></li>
+          <li><i>ussss</i><em>X8</em><dfn>¥20</dfn></li>
+          <li><i>ussss</i><em>X8</em><dfn>¥20</dfn></li>
+          <li><i>ussss</i><em>X8</em><dfn>¥20</dfn></li>
+        </ul>
+
+        <div class="co-total">
+          <span class="f18">订单 ¥24298</span>
+          <em class="f18 fwb">待支付 ¥24298</em>
+        </div>
+      </div>
+
+      <div class="c-pay">
+        <router-link tag="p" to="/confirmOrder/remark"><span>订单备注</span><dfn class="flex"><em class="flex">口味、偏好等</em><i class="flex"><SvgIcon class="icon-style" iconName="arrow-right" /></i></dfn></router-link>
+        <router-link tag="p" to="/confirmOrder/invoice"><span>发票抬头</span><dfn class="flex"><em class="flex">不需要开发票</em><i class="flex"><SvgIcon class="icon-style" iconName="arrow-right" /></i></dfn></router-link>
+      </div>
+
     </div>
+
+    <div class="c-comfirmPay pf">
+      <span class="f18 cf">待支付 ¥24298</span>
+      <router-link class="f18 tac cf" to="/confirmOrder/payment" tag="em">确认下单</router-link>
+    </div>
+
+    <Dialog :show="showPayType" @click.native="showPayType=false"/>
+
+    <transition name="slide-fade">
+      <div class="c-type pa bf" v-show="showPayType">
+        <h3 class="tac f18">支付方式</h3>
+        <ul>
+          <li @click="payOnline=false">
+            <span class="c6">货到付款（商家不支持货到付款）</span>
+            <em><i class="flex"><SvgIcon class="icon-style" :iconName="payOnline ? 'gou-h' : 'gou-l'" /></i></em>
+          </li>
+          <li @click="payOnline=true">
+            <span>在线支付</span>
+            <em><i class="flex"><SvgIcon class="icon-style" :iconName="payOnline ? 'gou-l' : 'gou-h'" /></i></em>
+          </li>
+        </ul>
+      </div>
+    </transition>
+
+    <transition name="router-slid" mode="out-in">
+        <router-view></router-view>
+    </transition>
   </div>
 </template>
 
@@ -37,14 +94,16 @@ import Header from '../../components/header'
 export default {
   data () {
     return {
-      isLogin: true
+      isLogin: true,
+      showPayType: false,
+      payOnline: true
     }
   },
   created () {
 
   },
   mounted () {
-
+    console.log('page has mounted !')
   },
   components: {
     Header
@@ -71,6 +130,9 @@ export default {
     padding-right: 0.1rem;
   }
 
+  .main{
+    padding-bottom: 0.7rem;
+  }
   /* 地址 */
   .c-address{
     .bg(#fff);
@@ -134,5 +196,146 @@ export default {
         }
       }
     }
+  }
+
+  /* 支付方式 */
+  .c-pay{
+    .bg(#fff);
+    padding: 0 0.1rem;
+    margin-bottom: 0.1rem;
+    p{
+      .hlh(0.5rem);
+      .border(solid, #eee, 0, 0, 1px, 0);
+      .flex;
+      justify-content: flex-start;
+      span{
+        width: 0.9rem;
+        flex-shrink: 0;
+        color: #666;
+      }
+      dfn{
+        flex-grow: 1;
+        text-align: right;
+        justify-content: flex-end;
+      }
+      em{
+        color: #999;
+      }
+    }
+  }
+
+  /* 订单详情 */
+  .c-order{
+    margin-bottom: 0.1rem;
+    .co-title{
+      .hlh(0.7rem);
+      .border(solid, #eee, 0, 0, 1px, 0);
+      .flex;
+      justify-content: flex-start;
+      padding: 0 0.1rem;
+      i{
+        .wh(0.3rem);
+        img{
+          .wh(100%, auto);
+        }
+      }
+      span{
+        margin-left: 0.1rem;
+      }
+    }
+
+    ul{
+      .border(solid, #eee, 0, 0, 1px, 0);
+      overflow: hidden;
+      padding: 0.1rem;
+      li{
+        .hlh(0.4rem);
+        .flex;
+        justify-content: flex-start;
+        i{
+          flex-grow: 1;
+          overflow: hidden;
+        }
+        em{
+          color: @c-redyellow;
+          width: 0.5rem;
+          flex-shrink: 0;
+          text-align: center;
+        }
+        dfn{
+          width: 0.6rem;
+          flex-shrink: 0;
+          text-align: center;
+        }
+      }
+    }
+
+    .co-total{
+     .hlh(0.6rem);
+     .flex;
+     justify-content: space-between;
+     padding: 0.1rem;
+     em{
+       color: @c-redyellow;
+     }
+    }
+  }
+  .c-comfirmPay{
+    .bg(#3c3c3c);
+    .flex;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 0.5rem;
+    justify-content: space-between;
+    span{
+      .bg(#3c3c3c);
+      flex-flow: 1;
+      overflow: hidden;
+      padding-left: 0.1rem;
+    }
+    em{
+      .bg(#56d176);
+      .wh(1.02rem, 0.5rem);
+      line-height: 0.5rem;
+      flex-shrink: 0;
+    }
+  }
+
+  /* 支付方式 */
+  .c-type{
+    height: 2.4rem;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    h3{
+      .bg(#f1f1f1);
+      .hlh(0.5rem);
+    }
+    ul{
+      overflow: hidden;
+      padding: 0 0.1rem;
+      li{
+        .hlh(0.58rem);
+        .flex;
+        justify-content: space-between;
+        span{
+          flex-grow: 1;
+        }
+        em{
+          .flex;
+          width: 0.5rem;
+          flex-shrink: 0;
+        }
+      }
+    }
+  }
+
+  .slide-fade-enter-active, .slide-fade-leave-active{
+    transition: all 0.6s;
+  }
+  .slide-fade-enter, .slide-fade-leave-active{
+    opacity: 0;
+    transform: translateY(100%);
   }
 </style>
