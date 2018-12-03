@@ -15,7 +15,7 @@
             <h3><span class="f16 fwb">slient</span><em>先生</em><dfn>15000000000</dfn></h3>
             <p><i>家</i>富力城</p>
           </div>
-          <div class="ca-right" v-else>请添加一个收获地址</div>
+          <router-link tag="div" to="/confirmOrder/chooseAddress" class="ca-right" v-else>请添加一个收获地址</router-link>
         </div>
         <span><SvgIcon class="icon-style" iconName="arrow-right" /></span>
       </div>

@@ -61,7 +61,6 @@ export default {
   @import url("../../../../lib/style/util");
 
   .remark {
-    .bg(#f1f1f1);
     z-index: 9;
   }
 

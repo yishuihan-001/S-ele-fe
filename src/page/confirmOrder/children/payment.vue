@@ -62,6 +62,9 @@ export default {
 <style lang="less" scoped>
   @import url("../../../../lib/style/util");
 
+  .payment{
+    z-index: 9;
+  }
   .p-time{
     height: 1.5rem;
     padding-top: 0.2rem;

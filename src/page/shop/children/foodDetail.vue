@@ -49,7 +49,6 @@ export default {
   @import url("../../../../lib/style/util");
 
   .foodDetail {
-    .bg(#fff);
     z-index: 9;
   }
   .f-img{

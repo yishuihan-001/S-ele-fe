@@ -16,6 +16,19 @@ const confirmOrder = r => require.ensure([], () => r(require('../page/confirmOrd
 const remark = r => require.ensure([], () => r(require('../page/confirmOrder/children/remark')), 'remark')
 const invoice = r => require.ensure([], () => r(require('../page/confirmOrder/children/invoice')), 'invoice')
 const payment = r => require.ensure([], () => r(require('../page/confirmOrder/children/payment')), 'payment')
+const userValidation = r => require.ensure([], () => r(require('../page/confirmOrder/children/userValidation')), 'userValidation')
+const chooseAddress = r => require.ensure([], () => r(require('../page/confirmOrder/children/chooseAddress')), 'chooseAddress')
+const addAddress = r => require.ensure([], () => r(require('../page/confirmOrder/children/children/addAddress')), 'addAddress')
+const searchAddress = r => require.ensure([], () => r(require('../page/confirmOrder/children/children/children/searchAddress')), 'searchAddress')
+const login = r => require.ensure([], () => r(require('../page/login/login')), 'login')
+const profile = r => require.ensure([], () => r(require('../page/profile/profile')), 'profile')
+const info = r => require.ensure([], () => r(require('../page/profile/children/info')), 'info')
+const setusername = r => require.ensure([], () => r(require('../page/profile/children/children/setusername')), 'setusername')
+const address = r => require.ensure([], () => r(require('../page/profile/children/children/address')), 'address')
+const add = r => require.ensure([], () => r(require('../page/profile/children/children/children/add')), 'add')
+const addDetail = r => require.ensure([], () => r(require('../page/profile/children/children/children/children/addDetail')), 'addDetail')
+const forget = r => require.ensure([], () => r(require('../page/forget/forget')), 'forget')
+const order = r => require.ensure([], () => r(require('../page/order/order')), 'order')
 
 const routes = [
   // 地址为空时跳转home页面
@@ -87,8 +100,76 @@ const routes = [
       {
         path: 'payment', // 付款页面
         component: payment
+      },
+      {
+        path: 'userValidation', // 用户验证
+        component: userValidation
+      },
+      {
+        path: 'chooseAddress', // 选择地址
+        component: chooseAddress,
+        children: [
+          {
+            path: 'addAddress', // 新增地址
+            component: addAddress,
+            children: [
+              {
+                path: 'searchAddress', // 搜索地址
+                component: searchAddress
+              }
+            ]
+          }
+        ]
       }
     ]
+  },
+  // 登录注册页
+  {
+    path: '/login',
+    component: login
+  },
+  // 个人中心页
+  {
+    path: '/profile',
+    component: profile,
+    children: [
+      {
+        path: 'info', // 个人信息
+        component: info,
+        children: [
+          {
+            path: 'setusername', // 修改用户名
+            component: setusername
+          },
+          {
+            path: 'address', // 编辑地址
+            component: address,
+            children: [
+              {
+                path: 'add', // 新增地址
+                component: add,
+                children: [
+                  {
+                    path: 'addDetail', // 搜索地址
+                    component: addDetail
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  // 修改密码页
+  {
+    path: '/forget',
+    component: forget
+  },
+  // 订单
+  {
+    path: '/order',
+    component: order
   }
 ]
 

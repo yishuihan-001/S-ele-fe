@@ -1,5 +1,5 @@
 <template>
-  <div class="container shopDetail">
+  <div class="container shopSafe">
     <Header back="true" title="食品监督安全公示" noRight="true"/>
     <div class="main">
       <div class="s-notice">
@@ -79,8 +79,7 @@ export default {
 <style lang="less" scoped>
   @import url("../../../../../lib/style/util");
 
-  .shopDetail {
-    .bg(#fff);
+  .shopSafe {
     z-index: 12;
   }
   .main > div{
