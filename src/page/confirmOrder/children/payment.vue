@@ -1,6 +1,6 @@
 <template>
   <div class="container payment">
-    <Header back="true" title="在线支付" noRight="true" class="r-header"/>
+    <Header back="true" title="在线支付" noRight="true"/>
 
     <div class="main">
       <div class="p-time bf tac">

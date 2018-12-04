@@ -45,7 +45,7 @@
           <li><i>ussss</i><em>X8</em><dfn>¥20</dfn></li>
           <li><i>ussss</i><em>X8</em><dfn>¥20</dfn></li>
         </ul>
-
+        <p><span>配送费</span><dfn>4</dfn></p>
         <div class="co-total">
           <span class="f18">订单 ¥24298</span>
           <em class="f18 fwb">待支付 ¥24298</em>
@@ -278,6 +278,18 @@ export default {
      em{
        color: @c-redyellow;
      }
+    }
+
+    p{
+      .hlh(0.5rem);
+      .border(solid, #eee, 0, 0, 1px, 0);
+      .flex;
+      justify-content: space-between;
+      padding: 0 0.1rem;
+      dfn{
+        width: 0.6rem;
+        text-align: center;
+      }
     }
   }
   .c-comfirmPay{

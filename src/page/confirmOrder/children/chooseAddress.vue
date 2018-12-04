@@ -1,6 +1,6 @@
 <template>
   <div class="container chooseAddress">
-    <Header back="true" title="选择地址" noRight="true" class="r-header"/>
+    <Header back="true" title="选择地址" noRight="true"/>
 
     <div class="main">
       <ul class="c-list pa">

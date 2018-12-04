@@ -1,6 +1,6 @@
 <template>
   <div class="container userValidation">
-    <Header back="true" title="用户手机验证" noRight="true" class="r-header"/>
+    <Header back="true" title="用户手机验证" noRight="true"/>
 
     <div class="main">
       <p class="p-title bf f18">收不到短信？使用<span>语音验证码</span></p>

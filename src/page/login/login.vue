@@ -1,6 +1,6 @@
 <template>
   <div class="container login">
-    <Header back="true" title="密码登录" noRight="true" class="r-header"/>
+    <Header back="true" title="密码登录" noRight="true"/>
 
     <div class="main">
       <div class="l-info">

@@ -1,6 +1,6 @@
 <template>
   <div class="container remark">
-    <Header back="true" title="订单备注" noRight="true" class="r-header"/>
+    <Header back="true" title="订单备注" noRight="true"/>
 
     <div class="main">
       <div class="r-quick bf">

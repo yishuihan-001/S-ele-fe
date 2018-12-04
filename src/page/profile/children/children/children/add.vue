@@ -1,6 +1,6 @@
 <template>
   <div class="container add">
-    <Header back="true" title="新增地址" noRight="true" class="r-header"/>
+    <Header back="true" title="新增地址" noRight="true"/>
 
     <div class="main">
       <ul>

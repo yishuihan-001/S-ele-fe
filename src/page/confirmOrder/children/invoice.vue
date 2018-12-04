@@ -1,6 +1,6 @@
 <template>
   <div class="container invoice">
-    <Header back="true" title="选择发票抬头" noRight="true" class="r-header"/>
+    <Header back="true" title="选择发票抬头" noRight="true"/>
 
     <div class="main">
       <div class="i-list bf flex">

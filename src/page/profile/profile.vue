@@ -1,6 +1,6 @@
 <template>
   <div class="container profile">
-    <Header back="true" title="我的" noRight="true" class="r-header"/>
+    <Header back="true" title="我的" noRight="true"/>
 
     <div class="main">
       <router-link tag="div" to="/profile/info" class="p-user">
@@ -13,14 +13,14 @@
       </router-link>
 
       <div class="p-info bf">
-        <div>
+        <router-link tag="div" to="/balance">
           <h3><span>0.00</span>元</h3>
           <p>我的余额</p>
-        </div>
-        <div>
+        </router-link>
+        <router-link tag="div" to="/benefit">
           <h3><span>3</span>个</h3>
           <p>我的优惠</p>
-        </div>
+        </router-link>
         <div>
           <h3><span>900</span>分</h3>
           <p>我的积分</p>
@@ -36,21 +36,21 @@
           <div><i><SvgIcon class="icon-style" iconName="p-score" /></i>积分商城</div>
           <span><SvgIcon class="icon-style" iconName="arrow-right" /></span>
         </li>
-        <li>
+        <router-link tag="li" to="/vipcard">
           <div><i><SvgIcon class="icon-style" iconName="p-vip" /></i>饿了么会员卡</div>
           <span><SvgIcon class="icon-style" iconName="arrow-right" /></span>
-        </li>
+        </router-link>
       </ul>
 
       <ul class="bf">
-        <li>
+        <router-link tag="li" to="/service">
           <div><i><SvgIcon class="icon-style" iconName="p-service" /></i>服务中心</div>
           <span><SvgIcon class="icon-style" iconName="arrow-right" /></span>
-        </li>
-        <li>
+        </router-link>
+        <router-link tag="li" to="/download">
           <div><i><SvgIcon class="icon-style" iconName="p-elm" /></i>下载饿了么APP</div>
           <span><SvgIcon class="icon-style" iconName="arrow-right" /></span>
-        </li>
+        </router-link>
       </ul>
     </div>
 

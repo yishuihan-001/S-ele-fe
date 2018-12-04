@@ -1,6 +1,6 @@
 <template>
   <div class="container addDetail">
-    <Header back="true" title="搜索地址" noRight="true" class="r-header"/>
+    <Header back="true" title="搜索地址" noRight="true"/>
 
     <div class="main">
       <div class="s-search bf f18 flex">

@@ -1,6 +1,6 @@
 <template>
   <div class="container address">
-    <Header back="true" title="编辑地址" class="r-header">
+    <Header back="true" title="编辑地址">
       <span slot="right" class="f16 cf c-right">编辑</span>
     </Header>
 

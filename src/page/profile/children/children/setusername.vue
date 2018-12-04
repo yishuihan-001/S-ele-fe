@@ -1,6 +1,6 @@
 <template>
   <div class="container setusername">
-    <Header back="true" title="修改用户名" noRight="true" class="r-header"/>
+    <Header back="true" title="修改用户名" noRight="true"/>
 
     <div class="main">
       <div class="s-con bf">

@@ -1,6 +1,6 @@
 <template>
   <div class="container info">
-    <Header back="true" title="账户信息" noRight="true" class="r-header"/>
+    <Header back="true" title="账户信息" noRight="true"/>
 
     <div class="main">
       <ul>

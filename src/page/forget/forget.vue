@@ -1,6 +1,6 @@
 <template>
   <div class="container forget">
-    <Header back="true" title="重置密码" noRight="true" class="r-header"/>
+    <Header back="true" title="重置密码" noRight="true"/>
 
     <div class="main">
       <div class="l-info">
