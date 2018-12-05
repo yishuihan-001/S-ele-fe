@@ -5,9 +5,9 @@
         <h3><i>¥</i> <em>0.00</em></h3>
         <p>配送费¥5</p>
       </div>
-      <div class="bd-topay">
+      <div class="bd-topay active">
         <em>还差20起送</em>
-        <span>去结算</span>
+        <router-link tag="span" to="/confirmOrder">去结算</router-link>
       </div>
       <div :class="['bd-cart', 'pa', bounce ? 'bounce' : '']" @click="showList">
         <i><SvgIcon class="icon-style" iconName="cart"/></i>

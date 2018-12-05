@@ -8,14 +8,14 @@
           <label for="">头像</label>
           <span><em><img :src="$store.state.placeholderImg" alt=""></em><i><SvgIcon class="icon-style" iconName="arrow-right" /></i></span>
         </li>
-        <li>
+        <router-link tag="li" to="/profile/info/setusername">
           <label for="">用户名</label>
           <span><dfn>15000000000</dfn><i><SvgIcon class="icon-style" iconName="arrow-right" /></i></span>
-        </li>
-        <li>
+        </router-link>
+        <router-link tag="li" to="/profile/info/address">
           <label for="">收货地址</label>
           <span><i><SvgIcon class="icon-style" iconName="arrow-right" /></i></span>
-        </li>
+        </router-link>
         <li class="title">
           <label for="">账号绑定</label>
         </li>
@@ -26,10 +26,10 @@
         <li class="title">
           <label for="">安全设置</label>
         </li>
-        <li>
+        <router-link tag="li" to="/forget">
           <label for="">登录密码</label>
           <span><dfn>修改</dfn><i><SvgIcon class="icon-style" iconName="arrow-right" /></i></span>
-        </li>
+        </router-link>
       </ul>
 
       <div class="r-btn">

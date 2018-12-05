@@ -1,5 +1,5 @@
 <template>
-    <div class="redpacket">
+    <div :class="['redpacket', overdue ? 'overdue' : '']">
       <div class="r-left">
         <h3>¥<span>1.0</span></h3>
         <p>满 40 元可用</p>
@@ -28,6 +28,7 @@ export default {
   created () {
 
   },
+  props: ['overdue'],
   mounted () {
 
   },

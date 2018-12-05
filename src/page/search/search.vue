@@ -23,11 +23,13 @@
         <div class="sh-clean tac f16 bf">清除搜索历史</div>
       </div>
     </div>
+    <Footer/>
   </div>
 </template>
 
 <script>
 import Header from '../../components/header'
+import Footer from '../../components/footer'
 
 export default {
   data () {
@@ -42,7 +44,8 @@ export default {
 
   },
   components: {
-    Header
+    Header,
+    Footer
   },
   computed: {
 

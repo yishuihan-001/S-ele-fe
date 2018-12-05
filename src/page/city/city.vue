@@ -13,10 +13,10 @@
       <div class="c-history oh">
         <div class="c9">搜索历史</div>
         <ul class="bf">
-          <li>
+          <router-link tag="li" to="/msite">
             <h3>朝阳大悦城</h3>
             <p>北京市朝阳区朝阳北路100号</p>
-          </li>
+          </router-link>
           <li>
             <h3>朝阳大悦城</h3>
             <p>北京市朝阳区朝阳北路100号</p>

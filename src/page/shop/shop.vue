@@ -3,9 +3,9 @@
     <transition name="scon-fade">
       <div class="s-shadow pa" v-show="showShadow"></div>
     </transition>
-    <router-link class="s-header pr" tag="div" to="/shop/shopDetail">
-      <div class="sh-back pa"><SvgIcon class="icon-style" iconName="arrow-left" /></div>
-      <div class="sh-shopDetail flex">
+    <div class="s-header pr">
+      <div class="sh-back pa" @click="$router.back()"><SvgIcon class="icon-style" iconName="arrow-left"/></div>
+      <router-link tag="div" to="/shop/shopDetail" class="sh-shopDetail flex">
         <div class="shh-info">
           <span><img :src="$store.state.placeholderImg" alt=""></span>
           <div>
@@ -15,12 +15,12 @@
           </div>
         </div>
         <i><SvgIcon class="icon-style" iconName="arrow-right-white" /></i>
-      </div>
+      </router-link>
       <div class="sh-activity flex">
         <p><dfn>减</dfn>满30减5，满60减8（APP专享）</p>
         <span><em>1个活动</em><i><SvgIcon class="icon-style" iconName="arrow-right-white" /></i></span>
       </div>
-    </router-link>
+    </div>
 
     <div class="s-tab bf flex">
       <span :class="{active: showProduct}" @click="switchTab('product')">商品</span><span :class="{active: !showProduct}" @click="switchTab('comment')">评价</span>
@@ -70,12 +70,12 @@
                         <span><i>¥</i><em>20</em></span>
                         <span>
                           <transition name="slide-fade">
-                            <strong v-show="singleNum > 0" @click="reduce('single')">
+                            <strong v-show="singleNum > 0" @click.stop="reduce('single')">
                               <SvgIcon class="icon-style" iconName="reduce"/>
                             </strong>
                           </transition>
                           <b v-show="singleNum > 0">{{singleNum}}</b>
-                          <strong  @click="add('single')">
+                          <strong  @click.stop="add('single')">
                             <SvgIcon class="icon-style add" iconName="add"/>
                           </strong>
                         </span>
@@ -93,12 +93,12 @@
                         <span><i>¥</i><em>20</em></span>
                         <span>
                           <transition name="slide-fade">
-                            <strong v-show="multiNum > 0" @click="reduce('multi')">
+                            <strong v-show="multiNum > 0" @click.stop="reduce('multi')">
                               <SvgIcon class="icon-style" iconName="reduce"/>
                             </strong>
                           </transition>
                           <b v-show="multiNum > 0">{{multiNum}}</b>
-                          <dfn @click="add('multi')">选规格</dfn>
+                          <dfn @click.stop="add('multi')">选规格</dfn>
                         </span>
                       </p>
                     </div>

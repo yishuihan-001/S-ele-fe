@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import Header from '../../../components/header'
+import Header from '../../../../../components/header'
 
 export default {
   data () {
@@ -46,7 +46,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-  @import url("../../../../lib/style/util");
+  @import url("../../../../../../lib/style/util");
 
   .userValidation{
     z-index: 9;

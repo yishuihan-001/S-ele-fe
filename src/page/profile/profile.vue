@@ -3,7 +3,7 @@
     <Header back="true" title="我的" noRight="true"/>
 
     <div class="main">
-      <router-link tag="div" to="/profile/info" class="p-user">
+      <router-link tag="div" :to="isLogin ? '/profile/info' : '/login'" class="p-user">
         <span><img :src="$store.state.placeholderImg" alt=""></span>
         <div>
           <p class="f18 fwb">登录/注册</p>
@@ -21,10 +21,10 @@
           <h3><span>3</span>个</h3>
           <p>我的优惠</p>
         </router-link>
-        <div>
+        <router-link tag="div" to="/points">
           <h3><span>900</span>分</h3>
           <p>我的积分</p>
-        </div>
+        </router-link>
       </div>
 
       <ul class="bf">
@@ -32,10 +32,10 @@
           <div><i><SvgIcon class="icon-style" iconName="p-order" /></i>我的订单</div>
           <span><SvgIcon class="icon-style" iconName="arrow-right" /></span>
         </router-link>
-        <li>
+        <router-link tag="li" to="/points">
           <div><i><SvgIcon class="icon-style" iconName="p-score" /></i>积分商城</div>
           <span><SvgIcon class="icon-style" iconName="arrow-right" /></span>
-        </li>
+        </router-link>
         <router-link tag="li" to="/vipcard">
           <div><i><SvgIcon class="icon-style" iconName="p-vip" /></i>饿了么会员卡</div>
           <span><SvgIcon class="icon-style" iconName="arrow-right" /></span>
@@ -57,17 +57,18 @@
     <transition name="router-slid" mode="out-in">
         <router-view></router-view>
     </transition>
-
+    <Footer/>
   </div>
 </template>
 
 <script>
 import Header from '../../components/header'
+import Footer from '../../components/footer'
 
 export default {
   data () {
     return {
-
+      isLogin: true
     }
   },
   created () {
@@ -77,7 +78,8 @@ export default {
 
   },
   components: {
-    Header
+    Header,
+    Footer
   },
   computed: {
 

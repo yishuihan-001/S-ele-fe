@@ -7,6 +7,7 @@
         <span :class="{active: showRedPacket}" @click="showRedPacket=true">红包</span>
         <span :class="{active: !showRedPacket}" @click="showRedPacket=false">商家代金券</span>
       </div>
+
       <div class="b-con pa">
         <transition name="scon-fade" mode="out-in">
           <div class="bc-redpacket" v-if="showRedPacket" key="redpacket">
@@ -18,11 +19,11 @@
               </router-link>
             </h3>
             <ul>
-              <li><RedPacket/></li>
-              <li><RedPacket/></li>
+              <li><RedPacket :overdue="false"/></li>
+              <li><RedPacket :overdue="false"/></li>
             </ul>
             <h4>限品类：快餐便当、特色菜系、小吃夜宵、甜品饮品、异国料理</h4>
-            <p><span>查看历史红包 ></span></p>
+            <p><router-link tag="span" to="/benefit/hbHistory">查看历史红包 ></router-link></p>
           </div>
 
           <div class="bc-ticket" v-else key="ticket">
@@ -42,6 +43,11 @@
             </div>
           </div>
         </transition>
+      </div>
+
+      <div class="b-switch pa bf">
+        <router-link tag="span" to="/benefit/exchange" class="bs-one">兑换红包</router-link>
+        <router-link tag="span" to="/benefit/commend">推荐有奖</router-link>
       </div>
     </div>
 
@@ -187,6 +193,24 @@ export default {
         .border(solid, @c-green, 1px);
       }
     }
+  }
+}
+
+/* 底部导航 */
+.b-switch{
+  .flex;
+  .hlh(0.5rem);
+  .border(solid, #eee, 1px, 0, 0, 0);
+  bottom: 0;
+  left: 0;
+  right: 0;
+  span{
+    .wh(50%, 0.5rem);
+    text-align: center;
+    box-sizing: border-box;
+  }
+  .bs-one{
+    .border(solid, #eee, 0, 1px, 0, 0);
   }
 }
 

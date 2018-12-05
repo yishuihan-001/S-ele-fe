@@ -1,22 +1,22 @@
 <template>
   <div class="container confirmOrder">
     <Header title="确认订单" back="true">
-      <router-link slot="right" class="f16 cf c-right" to="/food" v-if="isLogin">
+      <router-link slot="right" class="f16 cf c-right" to="/profile" v-if="isLogin">
         <i class="flex"><SvgIcon class="icon-style" iconName="user"/></i>
       </router-link>
-      <router-link slot="right" class="f16 cf c-right" to="/food" v-else>登录/注册</router-link>
+      <router-link slot="right" class="f16 cf c-right" to="/login" v-else>登录/注册</router-link>
     </Header>
 
     <div class="main">
       <div class="c-address">
-        <div>
+        <router-link tag="div" to="/confirmOrder/chooseAddress">
           <div class="ca-left"><SvgIcon class="icon-style" iconName="site" /></div>
-          <div class="ca-right" v-if="false">
+          <div class="ca-right" v-if="true">
             <h3><span class="f16 fwb">slient</span><em>先生</em><dfn>15000000000</dfn></h3>
             <p><i>家</i>富力城</p>
           </div>
-          <router-link tag="div" to="/confirmOrder/chooseAddress" class="ca-right" v-else>请添加一个收获地址</router-link>
-        </div>
+          <div class="ca-right" v-else>请添加一个收获地址</div>
+        </router-link>
         <span><SvgIcon class="icon-style" iconName="arrow-right" /></span>
       </div>
 
@@ -94,7 +94,7 @@ import Header from '../../components/header'
 export default {
   data () {
     return {
-      isLogin: true,
+      isLogin: false,
       showPayType: false,
       payOnline: true
     }

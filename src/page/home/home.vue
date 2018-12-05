@@ -2,7 +2,10 @@
   <div class="container home">
     <Header>
       <div slot="left" class="f16 cf h-logo" @click="reload">ele.me</div>
-      <router-link slot="right" class="f16 cf h-right" to="/food">登录/注册</router-link>
+      <router-link slot="right" class="f16 cf c-right" to="/profile" v-if="isLogin">
+        <i class="flex"><SvgIcon class="icon-style" iconName="user"/></i>
+      </router-link>
+      <router-link slot="right" class="f16 cf h-right" to="/login" v-else>登录/注册</router-link>
     </Header>
     <div class="main">
       <div class="h-curr bf">
@@ -10,12 +13,12 @@
           <span class="c6">当前定位城市：</span>
           <span class="c9">定位不准时，请在城市列表中选择</span>
         </div>
-        <div class="flex">
+        <router-link tag="div" to="/city/3" class="flex">
           <span class="hc-site f16">北京</span>
           <span class="hc-arrow flex">
             <SvgIcon class="icon-style" iconName="arrow-right" />
           </span>
-        </div>
+        </router-link>
       </div>
 
       <div class="h-hot bf">
@@ -69,7 +72,7 @@ import Header from '../../components/header'
 export default {
   data () {
     return {
-
+      isLogin: false
     }
   },
   created () {
@@ -100,6 +103,9 @@ export default {
 
 .home {
 
+}
+.c-right{
+  margin-right: 0.1rem;
 }
 .h-logo {
   .hlh(0.45rem);

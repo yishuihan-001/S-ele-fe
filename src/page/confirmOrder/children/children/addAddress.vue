@@ -17,7 +17,7 @@
         <li>
           <label for="">联系电话</label>
           <div>
-            <input type="text" placeholder="你的手机号">
+            <router-link tag="input" to="/confirmOrder/chooseAddress/addAddress/userValidation" type="text" placeholder="你的手机号"></router-link>
             <dfn><SvgIcon class="icon-style" iconName="add" /></dfn>
             <input type="text" placeholder="备选电话">
           </div>

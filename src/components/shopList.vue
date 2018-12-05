@@ -1,6 +1,6 @@
 <template>
   <ul class="shopList oh">
-    <li>
+    <router-link tag="li" to="/shop">
       <div class="s-left"><img :src="$store.state.placeholderImg" alt=""></div>
       <div class="s-right">
         <div class="sr-one">
@@ -23,7 +23,7 @@
           <span class="srt-right f12">2104.7公里 / <em>22小时16分钟</em></span>
         </div>
       </div>
-    </li>
+    </router-link>
     <li>
       <div class="s-left"><img :src="$store.state.placeholderImg" alt=""></div>
       <div class="s-right">

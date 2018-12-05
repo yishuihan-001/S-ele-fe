@@ -5,8 +5,9 @@
       <SvgIcon class="icon-style" iconName="arrow-left" />
     </div>
 
-    <div class="h-title cf f16" v-if="title">{{title}}</div>
-    <div class="h-emtpyMiddle" v-if="!title"></div>
+    <router-link tag="div" to="/home" class="h-title cf f16" v-if="titleLink && title">{{title}}</router-link>
+    <div class="h-title cf f16" v-else-if="title">{{title}}</div>
+    <div class="h-emtpyMiddle" v-else></div>
 
     <slot name="right"></slot>
     <div class="h-emtpyRight" v-if="noRight"></div>
@@ -20,7 +21,7 @@ export default {
 
     }
   },
-  props: ['back', 'title', 'noRight'],
+  props: ['back', 'title', 'noRight', 'titleLink'],
   created () {
 
   },

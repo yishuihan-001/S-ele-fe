@@ -52,11 +52,13 @@
     <transition name="router-slid" mode="out-in">
         <router-view></router-view>
     </transition>
+    <Footer/>
   </div>
 </template>
 
 <script>
 import Header from '../../components/header'
+import Footer from '../../components/footer'
 
 export default {
   data () {
@@ -71,7 +73,8 @@ export default {
 
   },
   components: {
-    Header
+    Header,
+    Footer
   },
   computed: {
 

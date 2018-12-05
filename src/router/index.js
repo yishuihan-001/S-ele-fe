@@ -16,9 +16,9 @@ const confirmOrder = r => require.ensure([], () => r(require('../page/confirmOrd
 const remark = r => require.ensure([], () => r(require('../page/confirmOrder/children/remark')), 'remark')
 const invoice = r => require.ensure([], () => r(require('../page/confirmOrder/children/invoice')), 'invoice')
 const payment = r => require.ensure([], () => r(require('../page/confirmOrder/children/payment')), 'payment')
-const userValidation = r => require.ensure([], () => r(require('../page/confirmOrder/children/userValidation')), 'userValidation')
 const chooseAddress = r => require.ensure([], () => r(require('../page/confirmOrder/children/chooseAddress')), 'chooseAddress')
 const addAddress = r => require.ensure([], () => r(require('../page/confirmOrder/children/children/addAddress')), 'addAddress')
+const userValidation = r => require.ensure([], () => r(require('../page/confirmOrder/children/children/children/userValidation')), 'userValidation')
 const searchAddress = r => require.ensure([], () => r(require('../page/confirmOrder/children/children/children/searchAddress')), 'searchAddress')
 const login = r => require.ensure([], () => r(require('../page/login/login')), 'login')
 const profile = r => require.ensure([], () => r(require('../page/profile/profile')), 'profile')
@@ -43,6 +43,11 @@ const balanceDetail = r => require.ensure([], () => r(require('../page/balance/c
 const benefit = r => require.ensure([], () => r(require('../page/benefit/benefit')), 'benefit')
 const coupon = r => require.ensure([], () => r(require('../page/benefit/children/coupon')), 'coupon')
 const hbDescription = r => require.ensure([], () => r(require('../page/benefit/children/hbDescription')), 'hbDescription')
+const hbHistory = r => require.ensure([], () => r(require('../page/benefit/children/hbHistory')), 'hbHistory')
+const exchange = r => require.ensure([], () => r(require('../page/benefit/children/exchange')), 'exchange')
+const commend = r => require.ensure([], () => r(require('../page/benefit/children/commend')), 'commend')
+const points = r => require.ensure([], () => r(require('../page/points/points')), 'points')
+const pointsDetail = r => require.ensure([], () => r(require('../page/points/children/pointsDetail')), 'pointsDetail')
 
 const routes = [
   // 地址为空时跳转home页面
@@ -116,10 +121,6 @@ const routes = [
         component: payment
       },
       {
-        path: 'userValidation', // 用户验证
-        component: userValidation
-      },
-      {
         path: 'chooseAddress', // 选择地址
         component: chooseAddress,
         children: [
@@ -127,6 +128,10 @@ const routes = [
             path: 'addAddress', // 新增地址
             component: addAddress,
             children: [
+              {
+                path: 'userValidation', // 用户验证
+                component: userValidation
+              },
               {
                 path: 'searchAddress', // 搜索地址
                 component: searchAddress
@@ -254,6 +259,29 @@ const routes = [
       {
         path: 'hbDescription', // 红包说明
         component: hbDescription
+      },
+      {
+        path: 'hbHistory', // 历史红包
+        component: hbHistory
+      },
+      {
+        path: 'exchange', // 兑换红包
+        component: exchange
+      },
+      {
+        path: 'commend', // 推荐有奖
+        component: commend
+      }
+    ]
+  },
+  // 我的积分
+  {
+    path: '/points',
+    component: points,
+    children: [
+      {
+        path: 'pointsDetail', // 积分说明
+        component: pointsDetail
       }
     ]
   }
