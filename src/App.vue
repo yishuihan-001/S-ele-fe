@@ -14,6 +14,7 @@
 <style lang="less">
   @import "../lib/style/reset";
   @import "../lib/style/common";
+  @import "../lib/style/self-mint";
 
   html,
   body,

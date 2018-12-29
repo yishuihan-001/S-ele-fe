@@ -2,92 +2,121 @@
   <div class="container home">
     <Header>
       <div slot="left" class="f16 cf h-logo" @click="reload">ele.me</div>
-      <router-link slot="right" class="f16 cf c-right" to="/profile" v-if="isLogin">
+      <router-link slot="right" class="f16 cf c-right" to="/profile" v-if="userInfo">
         <i class="flex"><SvgIcon class="icon-style" iconName="user"/></i>
       </router-link>
       <router-link slot="right" class="f16 cf h-right" to="/login" v-else>登录/注册</router-link>
     </Header>
-    <div class="main">
-      <div class="h-curr bf">
-        <div class="flex">
-          <span class="c6">当前定位城市：</span>
-          <span class="c9">定位不准时，请在城市列表中选择</span>
+    <div class="main" id="scrollWrap">
+      <div class="scroll-wrap">
+        <div class="h-curr bf">
+          <div class="flex">
+            <span class="c6">当前定位城市：</span>
+            <span class="c9">定位不准时，请在城市列表中选择</span>
+          </div>
+          <router-link tag="div" :to="'/city/' + (currCity && currCity.id)" class="flex">
+            <span class="hc-site f16">{{currCity && currCity.name}}</span>
+            <span class="hc-arrow flex">
+              <SvgIcon class="icon-style" iconName="arrow-right" />
+            </span>
+          </router-link>
         </div>
-        <router-link tag="div" to="/city/3" class="flex">
-          <span class="hc-site f16">北京</span>
-          <span class="hc-arrow flex">
-            <SvgIcon class="icon-style" iconName="arrow-right" />
-          </span>
-        </router-link>
-      </div>
 
-      <div class="h-hot bf">
-        <p class="c6">热门城市</p>
-        <ul class="oh">
-          <li>北京</li>
-          <li>上海</li>
-          <li>西安</li>
-          <li>广州</li>
-          <li>深圳</li>
-          <li>成都</li>
-          <li>杭州</li>
-          <li>宝鸡</li>
+        <div class="h-hot bf">
+          <p class="c6">热门城市</p>
+          <ul class="oh">
+            <li v-for="(item, index) in cityHot" :key="index" @click="setCityGo(item)">{{item.name}}</li>
+          </ul>
+        </div>
+
+        <ul class="h-all oh">
+          <li v-for="(item, index) in cityGroup" :key="index">
+            <p>{{index}}<span v-if="index === 0">（按字母排序）</span></p>
+            <div>
+              <span v-for="(it, i) in item" :key="i" @click="setCityGo(it)">{{it.name}}</span>
+            </div>
+          </li>
         </ul>
       </div>
-
-      <ul class="h-all oh">
-        <li>
-          <p>A<span>（按字母排序）</span></p>
-          <div>
-            <span>1</span>
-            <span>2</span>
-            <span>3</span>
-            <span>4</span>
-            <span>5</span>
-            <span>6</span>
-            <span>7</span>
-            <span>8</span>
-          </div>
-        </li>
-        <li>
-          <p>B</p>
-          <div>
-            <span>1</span>
-            <span>2</span>
-            <span>3</span>
-            <span>4</span>
-            <span>5</span>
-            <span>6</span>
-            <span>7</span>
-          </div>
-        </li>
-      </ul>
     </div>
   </div>
 </template>
 
 <script>
-import Header from '../../components/header'
+import BScroll from 'better-scroll'
+import { mapState, mapMutations } from 'vuex'
+import { Toast } from 'mint-ui'
+import Api from '@src/service/api'
+import Res from '@src/service/res'
+import Header from '@src/components/header'
 
 export default {
   data () {
     return {
-      isLogin: false
+      cityHot: [], // 热门城市
+      cityGroup: [] // 城市列表
     }
   },
   created () {
 
   },
   mounted () {
-
+    this.initData()
   },
   components: {
     Header
   },
   computed: {
-
+    ...mapState([ 'userInfo', 'currCity' ])
   },
   methods: {
+    ...mapMutations([ 'Set_CurrCity' ]),
+
+    // 设置当前城市并前往
+    setCityGo (item) {
+      this.Set_CurrCity(item)
+      this.$router.push('/city/' + item.id)
+    },
+
+    async initData () {
+      try {
+        // 获取当前城市
+        let res1 = await Api.getCity({ type: 'guess' })
+        Res(res1, data => {
+          this.Set_CurrCity(data)
+        })
+
+        // 获取热门城市
+        let res2 = await Api.getCity({ type: 'cityHot' })
+        Res(res2, data => {
+          this.cityHot = data
+        })
+
+        // 获取城市列表
+        let res3 = await Api.getCity({ type: 'cityGroup' })
+        Res(res3, data => {
+          let sortobj = {}
+          for (let i = 65; i <= 90; i++) {
+            if (data[String.fromCharCode(i)]) {
+              sortobj[String.fromCharCode(i)] = data[String.fromCharCode(i)]
+            }
+          }
+          this.cityGroup = sortobj
+          this.$nextTick(() => {
+            /* eslint-disable no-new */
+            new BScroll('#scrollWrap', {
+              deceleration: 0.001,
+              bounce: true,
+              swipeTime: 1800,
+              click: true
+            })
+          })
+        })
+      } catch (err) {
+        Toast(err.message || '初始化数据失败')
+      }
+    },
+
     reload () {
       window.location.reload()
     }
@@ -175,7 +204,7 @@ export default {
         .ellipsis;
         .border(solid, #eee, 0, 1px, 1px, 0);
         line-height: 0.36rem;
-        color: @c-blue;
+        color: #666;
         float: left;
         text-align: center;
         box-sizing: border-box;

@@ -1,10 +1,11 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+const routerMode = require('../../config').routerMode
 
 Vue.use(Router)
 
-const home = r => require.ensure([], () => r(require('../page/home/home')), 'home')
-const city = r => require.ensure([], () => r(require('../page/city/city')), 'city')
+/* A */ const home = r => require.ensure([], () => r(require('../page/home/home')), 'home')
+/* A */ const city = r => require.ensure([], () => r(require('../page/city/city')), 'city')
 const msite = r => require.ensure([], () => r(require('../page/msite/msite')), 'msite')
 const food = r => require.ensure([], () => r(require('../page/food/food')), 'food')
 const search = r => require.ensure([], () => r(require('../page/search/search')), 'search')
@@ -288,7 +289,7 @@ const routes = [
 ]
 
 export default new Router({
-  mode: 'history',
+  mode: routerMode,
   base: process.env.BASE_URL,
   routes
 })

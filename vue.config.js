@@ -1,20 +1,6 @@
 const path = require('path')
-const devEnv = require('./config/dev.env') // 本地环境
-const testEnv = require('./config/test.env') // 测试环境
-const proEnv = require('./config/pro.env') // 生产环境
-
-const env = process.env.NODE_ENV
+const hostUrl = require('./config').hostUrl
 const isPro = process.env.NODE_ENV === 'production'
-let target = ''
-
-// 默认是本地环境
-if (env === 'production') {
-  target = proEnv.hosturl
-} else if (env === 'test') {
-  target = testEnv.hosturl
-} else {
-  target = devEnv.hosturl
-}
 
 function resolve (dir) {
   return path.join(__dirname, '.', dir)
@@ -53,7 +39,8 @@ module.exports = {
       extensions: ['.js', '.vue', '.json', '.css'],
       alias: {
         vue$: 'vue/dist/vue.esm.js',
-        '@': resolve('src')
+        '@src': resolve('src'),
+        '@lib': resolve('lib')
       }
     }
   },
@@ -73,8 +60,8 @@ module.exports = {
     hotOnly: false,
     disableHostCheck: true,
     proxy: {
-      '/blog': {
-        target: target,
+      '/api': {
+        target: hostUrl,
         changeOrigin: true,
         ws: true,
         pathRewrite: {

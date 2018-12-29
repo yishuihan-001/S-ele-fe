@@ -15,6 +15,11 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
+import { Toast } from 'mint-ui'
+import Api from '@src/service/api'
+import Res from '@src/service/res'
+
 export default {
   data () {
     return {
@@ -26,7 +31,7 @@ export default {
 
   },
   mounted () {
-
+    this.initData()
   },
   components: {
 
@@ -35,7 +40,18 @@ export default {
 
   },
   methods: {
+    ...mapMutations(['Set_UserInfo']),
 
+    async initData () {
+      try {
+        let userInfo = await Api.getUserInfo()
+        Res(userInfo, data => {
+          this.Set_UserInfo(data)
+        }, false)
+      } catch (err) {
+        Toast(err.message || '获取用户信息失败')
+      }
+    }
   },
   watch: {
 

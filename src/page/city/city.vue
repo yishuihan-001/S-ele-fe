@@ -1,62 +1,162 @@
 <template>
   <div class="container city">
-    <Header back="true" title="北京">
+    <Header back="true" :title="currCity && currCity.name">
       <router-link slot="right" class="f16 cf h-right" to="/home">切换城市</router-link>
     </Header>
 
     <div class="main">
       <div class="c-search bf">
-        <input type="text" placeholder="输入学校、商务楼、地址" class="g-input">
-        <span class="g-btn">提交</span>
+        <input type="text" placeholder="输入学校、商务楼、地址" class="g-input" v-model="searchPlace">
+        <span class="g-btn" @click="submit">提交</span>
       </div>
 
-      <div class="c-history oh">
-        <div class="c9">搜索历史</div>
-        <ul class="bf">
-          <router-link tag="li" to="/msite">
-            <h3>朝阳大悦城</h3>
-            <p>北京市朝阳区朝阳北路100号</p>
-          </router-link>
-          <li>
-            <h3>朝阳大悦城</h3>
-            <p>北京市朝阳区朝阳北路100号</p>
-          </li>
-          <li>
-            <h3>朝阳大悦城</h3>
-            <p>北京市朝阳区朝阳北路100号</p>
-          </li>
-          <li>
-            <h5>清空所有</h5>
-          </li>
-        </ul>
+      <div class="c-history oh pa" id="scrollWrap">
+        <div class="scroll-wrap">
+          <div class="c9" v-if="showHistory">搜索历史</div>
+          <ul class="bf">
+            <template v-if="showHistory">
+              <li v-for="(item, index) in placeHistory" :key="index" @click="goCity(item, 0)">
+                <h3>{{item.title}}</h3>
+                <p>{{item.address}}</p>
+              </li>
+            </template>
+            <template v-else>
+              <li to="/msite" v-for="(item, index) in placeSearch" :key="index" @click="goCity(item, 1)">
+                <h3>{{item.title}}</h3>
+                <p>{{item.address}}</p>
+              </li>
+            </template>
+            <li v-if="showHistory && placeHistory.length" @click="cleanPlace">
+              <h5>清空所有</h5>
+            </li>
+            <li v-else-if="showHistory && !placeHistory.length">
+              <h5>暂无搜索历史</h5>
+            </li>
+            <li v-else-if="!showHistory && placeSearch.length">
+              <h5>没有更多内容了</h5>
+            </li>
+            <li v-else>
+              <h5>未搜索到相关内容</h5>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import Header from '../../components/header'
+import BScroll from 'better-scroll'
+import { Toast } from 'mint-ui'
+import Util from '@lib/js/util'
+import Ju from '@lib/js/judge'
+import Api from '@src/service/api'
+import Res from '@src/service/res'
+import Header from '@src/components/header'
 
 export default {
   data () {
     return {
-
+      currCity: null,
+      searchPlace: '',
+      placeHistory: [],
+      placeSearch: [],
+      showHistory: true
     }
   },
   created () {
 
   },
   mounted () {
-
+    this.initData()
   },
   components: {
     Header
   },
-  computed: {
-
-  },
+  computed: { },
   methods: {
+    // 清除历史记录
+    cleanPlace () {
+      Util.removeStore('placeHistory')
+      this.initData()
+    },
 
+    async initData () {
+      // 获取历史搜索记录
+      let historyList = Util.getStore('placeHistory')
+      if (historyList) {
+        this.placeHistory = JSON.parse(historyList)
+      } else {
+        this.placeHistory = []
+      }
+      this.$nextTick(() => {
+        /* eslint-disable no-new */
+        new BScroll('#scrollWrap', {
+          deceleration: 0.001,
+          bounce: true,
+          swipeTime: 1800,
+          click: true
+        })
+      })
+
+      // 获取城市信息
+      try {
+        let cityInfo = await Api.getCityById(this.$route.params.cityid || 3)
+        Res(cityInfo, data => {
+          this.currCity = data
+        })
+      } catch (err) {
+        Toast(err.message || '城市信息查找失败')
+      }
+    },
+
+    // 搜索
+    async submit () {
+      try {
+        if (Ju.isEmpty(this.searchPlace)) {
+          throw new Error('请输人搜索内容')
+        }
+        this.showHistory = false
+        let searchList = await Api.searchPlace({ cityId: this.currCity.id, keyword: this.searchPlace })
+        Res(searchList, data => {
+          this.placeSearch = data
+        })
+        this.$nextTick(() => {
+          /* eslint-disable no-new */
+          new BScroll('#scrollWrap', {
+            deceleration: 0.001,
+            bounce: true,
+            swipeTime: 1800,
+            click: true
+          })
+        })
+      } catch (err) {
+        Toast(err.message || '搜索失败')
+      }
+    },
+
+    // 前往城市
+    goCity (item, flag) {
+      if (flag) {
+        let historyList = Util.getStore('placeHistory')
+        if (historyList) {
+          historyList = JSON.parse(historyList)
+        } else {
+          historyList = []
+        }
+        let flag = true
+        historyList.forEach(it => {
+          if (JSON.stringify(it.location) === JSON.stringify(item.location)) {
+            flag = false
+          }
+        })
+        if (flag) {
+          historyList.push(item)
+          Util.setStore('placeHistory', historyList)
+        }
+      }
+      this.$router.push('/msite')
+    }
   },
   watch: {
 
@@ -83,28 +183,34 @@ export default {
 }
 
 .c-history{
-  div{
-    .hlh(0.32rem);
-    padding: 0 0.1rem;
-  }
-  ul{
-    .border(solid, #ccc, 1px, 0, 1px, 0);
-    li{
-      .border(solid, #eee, 0, 0, 1px, 0);
-      padding: 0.05rem 0.2rem;
-      h3{
-        .ellipsis;
-        line-height: 0.35rem;
-        font-size: 0.16rem;
-      }
-      p{
-        .ellipsis;
-        color: #999;
-      }
-      h5{
-        line-height: 0.35rem;
-        text-align: center;
-        color: #666;
+  top: 1.21rem;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  .scroll-wrap{
+    div{
+      .hlh(0.32rem);
+      padding: 0 0.1rem;
+    }
+    ul{
+      .border(solid, #ccc, 1px, 0, 1px, 0);
+      li{
+        .border(solid, #eee, 0, 0, 1px, 0);
+        padding: 0.05rem 0.2rem;
+        h3{
+          .ellipsis;
+          line-height: 0.35rem;
+          font-size: 0.16rem;
+        }
+        p{
+          .ellipsis;
+          color: #999;
+        }
+        h5{
+          line-height: 0.35rem;
+          text-align: center;
+          color: #666;
+        }
       }
     }
   }

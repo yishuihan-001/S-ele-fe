@@ -5,18 +5,18 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 
 const state = {
+  placeholderImg: 'http://f0.jmstatic.com/btstatic/h5/index/bg_logo_1_1.jpg',
   userInfo: null,
-  isLogin: false,
-  placeholderImg: 'http://f0.jmstatic.com/btstatic/h5/index/bg_logo_1_1.jpg'
+  currCity: null
 }
 
 const mutations = {
-  setUserInfo (state, userInfo) {
+  Set_UserInfo (state, userInfo) {
     state.userInfo = userInfo
   },
 
-  setLoginStatus (state, boo) {
-    state.isLogin = boo
+  Set_CurrCity (state, city) {
+    state.currCity = city
   }
 }
 
