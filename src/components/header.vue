@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 import { Toast } from 'mint-ui'
 import Api from '@src/service/api'
 import Res from '@src/service/res'
@@ -37,17 +37,26 @@ export default {
 
   },
   computed: {
-
+    ...mapState(['currCity'])
   },
   methods: {
-    ...mapMutations(['Set_UserInfo']),
+    ...mapMutations(['Set_UserInfo', 'Set_CurrCity']),
 
     async initData () {
       try {
+        // 获取当前登录态
         let userInfo = await Api.getUserInfo()
         Res(userInfo, data => {
           this.Set_UserInfo(data)
         }, false)
+
+        // 获取当前城市
+        if (!this.currCity) {
+          let res1 = await Api.getCity({ type: 'guess' })
+          Res(res1, data => {
+            this.Set_CurrCity(data)
+          })
+        }
       } catch (err) {
         Toast(err.message || '获取用户信息失败')
       }

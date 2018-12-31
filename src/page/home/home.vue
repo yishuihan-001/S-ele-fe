@@ -70,7 +70,7 @@ export default {
     ...mapState([ 'userInfo', 'currCity' ])
   },
   methods: {
-    ...mapMutations([ 'Set_CurrCity' ]),
+    ...mapMutations([ 'Set_UserInfo', 'Set_CurrCity' ]),
 
     // 设置当前城市并前往
     setCityGo (item) {
@@ -117,8 +117,17 @@ export default {
       }
     },
 
-    reload () {
-      window.location.reload()
+    async reload () {
+      // window.location.reload()
+      try {
+        let resObj = await Api.userSignout()
+        Res(resObj, () => {
+          this.Set_UserInfo(null)
+          Toast('您已退出登录')
+        })
+      } catch (err) {
+        Toast(err.message || '退出登录失败')
+      }
     }
   },
   watch: {

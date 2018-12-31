@@ -6,8 +6,9 @@ Vue.use(Vuex)
 
 const state = {
   placeholderImg: 'http://f0.jmstatic.com/btstatic/h5/index/bg_logo_1_1.jpg',
-  userInfo: null,
-  currCity: null
+  userInfo: null, // 用户信息
+  currCity: null, // 当前城市
+  cityAddress: null // 具体地址
 }
 
 const mutations = {
@@ -17,6 +18,10 @@ const mutations = {
 
   Set_CurrCity (state, city) {
     state.currCity = city
+  },
+
+  Set_CityAddress (state, address) {
+    state.cityAddress = address
   }
 }
 

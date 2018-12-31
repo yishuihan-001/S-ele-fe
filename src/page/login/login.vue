@@ -42,9 +42,8 @@
 </template>
 
 <script>
-// import { mapState } from 'vuex'
+import { mapMutations } from 'vuex'
 import { Toast } from 'mint-ui'
-// import Util from '@lib/js/util'
 import Va from '@lib/js/validator'
 import Api from '@src/service/api'
 import Res from '@src/service/res'
@@ -72,6 +71,8 @@ export default {
 
   },
   methods: {
+    ...mapMutations(['Set_UserInfo']),
+
     // 获取验证码
     async getVerifycode () {
       try {
@@ -102,8 +103,9 @@ export default {
           verifycode: this.verifycode
         }
         let resObj = await Api.userLogin(userInfo)
-        Res(resObj, () => {
+        Res(resObj, data => {
           Toast('登录成功')
+          this.Set_UserInfo(data)
           setTimeout(() => {
             this.$router.push('/msite')
           }, 1500)

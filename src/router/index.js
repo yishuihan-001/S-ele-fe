@@ -21,14 +21,14 @@ const chooseAddress = r => require.ensure([], () => r(require('../page/confirmOr
 const addAddress = r => require.ensure([], () => r(require('../page/confirmOrder/children/children/addAddress')), 'addAddress')
 const userValidation = r => require.ensure([], () => r(require('../page/confirmOrder/children/children/children/userValidation')), 'userValidation')
 const searchAddress = r => require.ensure([], () => r(require('../page/confirmOrder/children/children/children/searchAddress')), 'searchAddress')
-const login = r => require.ensure([], () => r(require('../page/login/login')), 'login')
+/* A */ const login = r => require.ensure([], () => r(require('../page/login/login')), 'login')
 const profile = r => require.ensure([], () => r(require('../page/profile/profile')), 'profile')
 const info = r => require.ensure([], () => r(require('../page/profile/children/info')), 'info')
 const setusername = r => require.ensure([], () => r(require('../page/profile/children/children/setusername')), 'setusername')
 const address = r => require.ensure([], () => r(require('../page/profile/children/children/address')), 'address')
 const add = r => require.ensure([], () => r(require('../page/profile/children/children/children/add')), 'add')
 const addDetail = r => require.ensure([], () => r(require('../page/profile/children/children/children/children/addDetail')), 'addDetail')
-const forget = r => require.ensure([], () => r(require('../page/forget/forget')), 'forget')
+/* A */ const forget = r => require.ensure([], () => r(require('../page/forget/forget')), 'forget')
 const order = r => require.ensure([], () => r(require('../page/order/order')), 'order')
 const orderDetail = r => require.ensure([], () => r(require('../page/order/children/orderDetail')), 'orderDetail')
 const vipcard = r => require.ensure([], () => r(require('../page/vipcard/vipcard')), 'vipcard')
@@ -85,7 +85,7 @@ const routes = [
   },
   // 商铺页
   {
-    path: '/shop',
+    path: '/shop/:shopid',
     component: shop,
     children: [
       {

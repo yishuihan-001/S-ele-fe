@@ -6,50 +6,62 @@
       <div class="l-info">
         <p>
           <label for="">账号</label>
-          <input type="text">
+          <input type="text" v-model="username">
         </p>
         <p>
           <label for="">旧密码</label>
-          <input type="password">
+          <input type="password" v-model="oldpassWord">
         </p>
         <p>
           <label for="">请输入新密码</label>
-          <input type="password">
+          <input type="password" v-model="newpassword">
         </p>
         <p>
           <label for="">请确认密码</label>
-          <input type="password">
+          <input type="password" v-model="confirmpassword">
         </p>
         <p>
           <label for="">验证码</label>
-          <input type="text">
+          <input type="text" v-model="verifycode">
           <span>
-            <dfn><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAeCAMAAACMnWmDAAAAGFBMVEUAAABQUFAAAAAAAAAAAAAAAAAAAAAAAABiRp8mAAAACHRSTlMA/wAAAAAAACXRGJEAAAmJSURBVHjaAX4JgfYAAAAAAAAAAAAAAQEBAQEBAQEBAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAQEBAQEBAQEBAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEBAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQEBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQEAAQEBAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQEBAQEBAAAAAAAAAAAAAAAAAQEBAQEBAQEBAQAAAAAAAAAAAAAAAAAAAAABAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAQEBAQEBAQAAAAAAAAAAAAAAAQEBAAAAAAABAQAAAAAAAAAAAAAAAAAAAAEBAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAQEBAQEBAQEAAAAAAAAAAAAAAAAAAAAAAAAAAQEAAAAAAAAAAAAAAAABAQEBAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEBAQEAAAEBAQEAAAAAAAAAAAAAAAAAAAAAAAAAAQEAAAAAAAAAAAAAAQEBAQEBAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEBAQEAAAEBAQEAAAAAAAAAAAAAAAAAAAAAAAAAAQEAAAAAAAAAAAAAAQEBAQEBAQAAAAAAAAAAAAAAAAAAAAABAQEBAQAAAAAAAAAAAAAAAAEBAQEAAAAAAAAAAAAAAAAAAQEAAAAAAAAAAAAAAQEAAAAAAAAAAAAAAAAAAQEBAQAAAAAAAAAAAAAAAAAAAQEBAQEBAQEBAAAAAAAAAAAAAAEBAQEAAQEBAAAAAAAAAAAAAQEBAAAAAAAAAAABAQAAAAAAAAAAAAAAAAAAAQEBAQAAAAAAAAAAAAAAAAAAAQEAAAAAAAEBAQAAAAAAAAAAAAEBAQEBAQEBAQAAAAAAAAAAAQEBAQAAAAAAAQEBAQAAAAAAAAAAAAAAAAAAAQEBAQAAAAAAAAAAAAAAAAABAQAAAAAAAAABAQEAAAAAAAAAAAEBAQEBAQEBAQEAAAAAAAAAAAEBAQEBAQEBAQEAAAAAAAAAAAAAAAAAAAAAAQEBAQAAAAAAAAAAAAAAAAABAQAAAAAAAQEBAQEAAAAAAAAAAAEBAQEAAAEBAQEAAAAAAAAAAAAAAQEBAQEBAAAAAAAAAAAAAAAAAAAAAAAAAQEBAQAAAAAAAAAAAAAAAAABAQAAAAEBAQEAAAAAAAAAAAAAAAEBAQEAAAEBAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQEBAQAAAAAAAAAAAAAAAAAAAQEBAQEBAAAAAAAAAAAAAAAAAAEBAQEAAAEBAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQEBAQAAAAAAAAAAAAAAAAAAAQEBAQAAAAAAAAAAAAAAAAAAAAEBAQEAAAEBAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQEBAQAAAAAAAAAAAAAAAAEBAQEBAQEAAAAAAAAAAAAAAAAAAAEBAQEAAAEBAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQEBAQAAAAAAAAAAAAAAAQEBAAAAAQEBAAAAAAAAAAAAAAAAAAEBAQEAAAEBAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQEBAQAAAAAAAAAAAAABAQEAAAAAAAEBAQAAAAAAAAAAAAAAAAEBAQEAAAEBAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQEBAQAAAAAAAAAAAAEBAQAAAAAAAAABAQAAAAAAAAAAAAAAAAABAQEBAQEBAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQEBAQAAAAAAAAAAAAEBAAAAAAAAAAABAQAAAAAAAAAAAAAAAAABAQEBAQEBAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQEBAQAAAAAAAAAAAAEBAAAAAAAAAAEBAQAAAAAAAAAAAAAAAAAAAQEBAQEBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQEBAQAAAAAAAAAAAAEBAQAAAAAAAQEBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAQEBAQEBAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEBAQEBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC/QwGlZN5OYQAAAABJRU5ErkJggg==" alt=""></dfn>
-            <b>
+            <dfn><img :src="codeSrc" alt=""></dfn>
+            <b @click="getVerifycode">
               <em>看不清</em>
               <i>换一张</i>
             </b>
           </span>
         </p>
       </div>
+      <div class="r-btn">
+        <span class="g-btn" @click="changePassword">确认修改</span>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import Header from '../../components/header'
+import { Toast } from 'mint-ui'
+import Va from '@lib/js/validator'
+import Api from '@src/service/api'
+import Res from '@src/service/res'
+import Header from '@src/components/header'
 
 export default {
   data () {
     return {
-
+      username: '',
+      oldpassWord: '',
+      newpassword: '',
+      confirmpassword: '',
+      verifycode: '',
+      codeSrc: ''
     }
   },
   created () {
 
   },
   mounted () {
-
+    this.getVerifycode()
   },
   components: {
     Header
@@ -58,7 +70,50 @@ export default {
 
   },
   methods: {
+    // 获取验证码
+    async getVerifycode () {
+      try {
+        let code = await Api.getVerifycode()
+        Res(code, data => {
+          this.codeSrc = data
+        })
+      } catch (err) {
+        Toast(err.message || '获取验证码失败')
+      }
+    },
 
+    // 修改密码
+    async changePassword () {
+      try {
+        let va = new Va()
+        va.add(this.username, [{ rule: 'isEmpty', msg: '用户名不能为空' }])
+        va.add(this.oldpassWord, [{ rule: 'isEmpty', msg: '原始密码不能为空' }])
+        va.add(this.newpassword, [{ rule: 'isEmpty', msg: '新密码不能为空' }])
+        va.add(this.confirmpassword, [{ rule: 'isEmpty', msg: '确认新密码不能为空' }, { rule: 'equal:' + this.newpassword, msg: '两次输入的新密码不一致' }])
+        va.add(this.verifycode, [{ rule: 'isEmpty', msg: '验证码不能为空' }])
+        let vaResult = va.start()
+        if (vaResult) {
+          throw new Error(vaResult)
+        }
+
+        let changeInfo = {
+          username: this.username,
+          oldpassWord: this.oldpassWord,
+          newpassword: this.newpassword,
+          confirmpassword: this.confirmpassword,
+          verifycode: this.verifycode
+        }
+        let resObj = await Api.userChangePassword(changeInfo)
+        Res(resObj, data => {
+          Toast('密码修改成功!')
+          setTimeout(() => {
+            this.$router.push('/msite')
+          }, 1500)
+        })
+      } catch (err) {
+        Toast(err.message || '登录失败')
+      }
+    }
   },
   watch: {
 
@@ -110,6 +165,15 @@ export default {
         }
       }
     }
+  }
+}
+
+.r-btn{
+  padding: 0.2rem 0.1rem;
+  span{
+    .hlh(0.4rem);
+    .bg(@c-green);
+    .border(solid, @c-green, 1px);
   }
 }
 </style>

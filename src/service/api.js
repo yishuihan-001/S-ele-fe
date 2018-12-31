@@ -35,6 +35,29 @@ Api.getUserInfo = () => fetch('/user/userInfo')
 Api.userLogin = data => fetch('/user/login', data, 'post')
 
 /**
+ * 退出登录
+ */
+Api.userSignout = () => fetch('/user/signout')
+
+/**
+ * 修改密码
+ */
+Api.userChangePassword = data => fetch('/user/changePassword', data, 'post')
+
+/**
+ * 商铺
+ */
+/**
+ * 商铺分类
+ */
+Api.shopCategoryAll = () => fetch('/shopping/category/all')
+
+/**
+ * 商铺列表
+ */
+Api.shopList = data => fetch('/shopping/shop/getList', data, 'post')
+
+/**
  * 其他
  */
 /**

@@ -47,6 +47,7 @@
 
 <script>
 import BScroll from 'better-scroll'
+import { mapMutations } from 'vuex'
 import { Toast } from 'mint-ui'
 import Util from '@lib/js/util'
 import Ju from '@lib/js/judge'
@@ -75,6 +76,8 @@ export default {
   },
   computed: { },
   methods: {
+    ...mapMutations(['Set_CityAddress']),
+
     // 清除历史记录
     cleanPlace () {
       Util.removeStore('placeHistory')
@@ -155,6 +158,7 @@ export default {
           Util.setStore('placeHistory', historyList)
         }
       }
+      this.Set_CityAddress(item)
       this.$router.push('/msite')
     }
   },
