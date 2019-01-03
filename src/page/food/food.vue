@@ -1,6 +1,6 @@
 <template>
   <div class="container food">
-    <Header back="true" title="甜品饮品" noRight="true"/>
+    <Header back="true" :title="urlQuery.title || '未知'" noRight="true"/>
 
     <div class="main">
       <div class="f-tab pa bf flex">
@@ -27,27 +27,28 @@
 
       <div :class="['f-class', 'pa', 'bf', 'flex', activeTab === 'class' ? 'showClass' : 'hideClass']">
         <ul class="fc-large">
-          <li>
-            <span><em>异国料理</em></span>
-            <span><dfn>833</dfn></span>
+          <li :class="{active: activeCategoryId === 0}" @click="targetCategory(0)">
+            <span><em>全部</em></span>
+            <span><dfn>999+</dfn></span>
           </li>
-          <li class="active">
-            <span><i><img :src="$store.state.placeholderImg" alt=""></i><em>快餐便当</em></span>
-            <span><dfn>833</dfn><b><SvgIcon class="icon-style" iconName="arrow-right" /></b></span>
+          <li v-for="(item, index) in shopCategoryList" :key="index" :class="[activeCategoryId === item.id ? 'active' : '']" @click="targetCategory(item.id)">
+            <span><i><img :src="$store.state.placeholderImg" alt=""></i><em>{{item.title}}</em></span>
+            <!-- <span><dfn>{{Math.floor(Math.random() * 1000)}}</dfn><b><SvgIcon class="icon-style" iconName="arrow-right" /></b></span> -->
+            <!-- 下次dom更新时候，会重新随机数字，所以此处不可用随机数 -->
+            <span><dfn>{{item.id}}</dfn><b><SvgIcon class="icon-style" iconName="arrow-right" /></b></span>
           </li>
         </ul>
         <ol class="fc-small">
-          <li><span>川湘菜</span><em>123</em></li>
-          <li><span>川湘菜</span><em>123</em></li>
+          <li v-for="(item, index) in menuList" :key="index" @click="getShopList"><span>{{item.name}}</span><em>{{Math.floor(Math.random() * 500)}}</em></li>
         </ol>
       </div>
 
       <ul :class="['f-sort', 'pa', 'bf', activeTab === 'sort' ? 'showSort' : 'hideSort']">
-        <li @click="sortType(1)" :class="[sortBy === 1 ? 'active' : '']">
+        <li @click="sortType(0)" :class="[sortBy === 0 ? 'active' : '']">
           <i><SvgIcon class="icon-style" iconName="sort" /></i>
           <span><em>智能排序</em><dfn><SvgIcon class="icon-style" iconName="correct" /></dfn></span>
         </li>
-        <li @click="sortType(2)" :class="[sortBy === 2 ? 'active' : '']">
+        <li @click="sortType(4)" :class="[sortBy === 4 ? 'active' : '']">
           <i><SvgIcon class="icon-style" iconName="site" /></i>
           <span><em>距离最近</em><dfn><SvgIcon class="icon-style" iconName="correct" /></dfn></span>
         </li>
@@ -55,7 +56,7 @@
           <i><SvgIcon class="icon-style" iconName="fire" /></i>
           <span><em>销量最高</em><dfn><SvgIcon class="icon-style" iconName="correct" /></dfn></span>
         </li>
-        <li @click="sortType(4)" :class="[sortBy === 4 ? 'active' : '']">
+        <li @click="sortType(1)" :class="[sortBy === 1 ? 'active' : '']">
           <i><SvgIcon class="icon-style" iconName="price" /></i>
           <span><em>起送价最低</em><dfn><SvgIcon class="icon-style" iconName="correct" /></dfn></span>
         </li>
@@ -63,7 +64,7 @@
           <i><SvgIcon class="icon-style" iconName="time" /></i>
           <span><em>配送速度最快</em><dfn><SvgIcon class="icon-style" iconName="correct" /></dfn></span>
         </li>
-        <li @click="sortType(6)" :class="[sortBy === 6 ? 'active' : '']">
+        <li @click="sortType(2)" :class="[sortBy === 2 ? 'active' : '']">
           <i><SvgIcon class="icon-style" iconName="star" /></i>
           <span><em>评分最高</em><dfn><SvgIcon class="icon-style" iconName="correct" /></dfn></span>
         </li>
@@ -72,53 +73,18 @@
       <div :class="['f-filter', 'pa', activeTab === 'filter' ? 'showFilter' : 'hideFilter']">
         <p>配送方式</p>
         <ul>
-          <li @click="delivery(1)" :class="[deliveryArr.indexOf(1) > -1 ? 'active' : '']">
+          <li v-for="(item, index) in deliveryList" :key="index" @click="delivery(item.id)" :class="[deliveryArr.indexOf(item.id) > -1 ? 'active' : '']">
             <i><SvgIcon class="icon-style" iconName="bird" /></i>
             <em><SvgIcon class="icon-style" iconName="correct" /></em>
-            <span>蜂鸟专送</span>
-          </li>
-          <li @click="delivery(2)" :class="[deliveryArr.indexOf(2) > -1 ? 'active' : '']">
-            <i><SvgIcon class="icon-style" iconName="bird" /></i>
-            <em><SvgIcon class="icon-style" iconName="correct" /></em>
-            <span>达达</span>
-          </li>
-          <li @click="delivery(3)" :class="[deliveryArr.indexOf(3) > -1 ? 'active' : '']">
-            <i><SvgIcon class="icon-style" iconName="bird" /></i>
-            <em><SvgIcon class="icon-style" iconName="correct" /></em>
-            <span>京东到家</span>
+            <span>{{item.text}}</span>
           </li>
         </ul>
         <p>商家属性（可以多选）</p>
         <ol>
-          <li @click="shopNature(1)" :class="[shopNatureArr.indexOf(1) > -1 ? 'active' : '']">
-            <dfn>平</dfn>
+          <li v-for="(item, index) in labelList" :key="index" @click="shopNature(item.id)" :class="[shopNatureArr.indexOf(item.id) > -1 ? 'active' : '']">
+            <dfn>{{item.icon_name}}</dfn>
             <em><SvgIcon class="icon-style" iconName="correct" /></em>
-            <span>品牌商家</span>
-          </li>
-          <li @click="shopNature(2)" :class="[shopNatureArr.indexOf(2) > -1 ? 'active' : '']">
-            <dfn>保</dfn>
-            <em><SvgIcon class="icon-style" iconName="correct" /></em>
-            <span>外卖保</span>
-          </li>
-          <li @click="shopNature(3)" :class="[shopNatureArr.indexOf(3) > -1 ? 'active' : '']">
-            <dfn>准</dfn>
-            <em><SvgIcon class="icon-style" iconName="correct" /></em>
-            <span>准时达</span>
-          </li>
-          <li @click="shopNature(4)" :class="[shopNatureArr.indexOf(4) > -1 ? 'active' : '']">
-            <dfn>新</dfn>
-            <em><SvgIcon class="icon-style" iconName="correct" /></em>
-            <span>新店</span>
-          </li>
-          <li @click="shopNature(5)" :class="[shopNatureArr.indexOf(5) > -1 ? 'active' : '']">
-            <dfn>付</dfn>
-            <em><SvgIcon class="icon-style" iconName="correct" /></em>
-            <span>在线支付</span>
-          </li>
-          <li @click="shopNature(6)" :class="[shopNatureArr.indexOf(6) > -1 ? 'active' : '']">
-            <dfn>票</dfn>
-            <em><SvgIcon class="icon-style" iconName="correct" /></em>
-            <span>开发票</span>
+            <span>{{item.name}}</span>
           </li>
         </ol>
         <div>
@@ -127,32 +93,74 @@
         </div>
       </div>
 
-      <div class="f-con pa bf">
-        <ShopList/>
+      <div class="f-con pa" id="scrollWrap">
+        <div class="bf">
+          <ShopList :shopList="shopList"/>
+          <div class="mm-loading flex" v-if="isPullUpLoad">
+            <i class="flex"><SvgIcon class="icon-style" iconName="loading" /></i>
+            <span>...正在加载...</span>
+            <i class="flex"><SvgIcon class="icon-style" iconName="loading" /></i>
+          </div>
+          <div class="mm-nomore tac" v-if="nomore">
+            <p>没有更多数据了</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import Header from '../../components/header'
-import ShopList from '../../components/shopList'
+import BScroll from 'better-scroll'
+import { Toast } from 'mint-ui'
+import Va from '@lib/js/validator'
+import Api from '@src/service/api'
+import Res from '@src/service/res'
+import Header from '@src/components/header'
+import ShopList from '@src/components/shopList'
 
 export default {
   data () {
     return {
       showFshadow: false, // 是否显示遮罩
       activeTab: '', // 当前显示的tab
-      sortBy: 1,
+      sortBy: 0,
       deliveryArr: [],
       shopNatureArr: [],
-      selectLen: 0
+      selectLen: 0,
+
+      shopCategoryList: [],
+      urlQuery: {},
+      deliveryList: [],
+      labelList: [],
+      activeCategoryId: 0,
+      menuList: [],
+      offset: 0,
+      limit: 20,
+      shopList: [],
+      scrollObj: null,
+      isPullUpLoad: false,
+      nomore: false
     }
   },
   created () {
-
+    this.urlQuery = this.$route.query
+    try {
+      let va = new Va()
+      va.add(this.urlQuery.id, [{ rule: 'isEmpty', msg: '商铺id参数缺失' }])
+      va.add(this.urlQuery.lat, [{ rule: 'isEmpty', msg: '纬度参数缺失' }])
+      va.add(this.urlQuery.lng, [{ rule: 'isEmpty', msg: '经度参数缺失' }])
+      let vaResult = va.start()
+      if (vaResult) {
+        throw new Error(vaResult)
+      }
+      this.activeCategoryId = +this.urlQuery.id
+    } catch (err) {
+      Toast(err.message || '参数错误')
+    }
   },
   mounted () {
+    this.initData()
   },
   components: {
     Header,
@@ -174,12 +182,13 @@ export default {
       }
       this.activeTab = tar
     },
+
     // 排序
     sortType (num) {
       this.sortBy = num
-      this.activeTab = ''
-      this.showFshadow = false
+      this.getShopList()
     },
+
     // 配送方式
     delivery (num) {
       let index = this.deliveryArr.indexOf(num)
@@ -190,6 +199,7 @@ export default {
       }
       this.selectLen = this.deliveryArr.length + this.shopNatureArr.length
     },
+
     // 商家属性
     shopNature (num) {
       let index = this.shopNatureArr.indexOf(num)
@@ -200,21 +210,163 @@ export default {
       }
       this.selectLen = this.deliveryArr.length + this.shopNatureArr.length
     },
+
     // 清空筛选
     cleanFilter () {
       this.deliveryArr = []
       this.shopNatureArr = []
       this.selectLen = 0
     },
+
     // 点击遮罩隐藏
     hideShadow () {
       this.activeTab = ''
       this.showFshadow = false
     },
+
     // 确认筛选条件
     confirmFilter () {
-      this.activeTab = ''
-      this.showFshadow = false
+      this.getShopList()
+    },
+
+    async initData () {
+      try {
+        this.getShopCategoryAll()
+        this.getDeliveryList()
+        this.getLabelList()
+        this.targetCategory(0, true)
+        this.getShopList()
+      } catch (err) {
+        Toast(err.message || '初始化失败')
+      }
+    },
+
+    // 获取商铺种类
+    async getShopCategoryAll () {
+      try {
+        let allShopCategory = await Api.shopCategoryAll()
+        Res(allShopCategory, data => {
+          this.shopCategoryList = data
+        })
+      } catch (err) {
+        Toast(err.message || '获取商铺分类失败')
+      }
+    },
+
+    // 获取商铺配送方式列表
+    async getDeliveryList () {
+      try {
+        let deliveryList = await Api.shopDeliveryAll()
+        Res(deliveryList, data => {
+          this.deliveryList = data
+        })
+      } catch (err) {
+        Toast(err.message || '商铺配送方式获取失败')
+      }
+    },
+
+    // 获取商家属性列表
+    async getLabelList () {
+      try {
+        let labelList = await Api.shopLabelAll()
+        Res(labelList, data => {
+          this.labelList = data
+        })
+      } catch (err) {
+        Toast(err.message || '商铺属性获取失败')
+      }
+    },
+
+    // 获取目标种类下的分类
+    async targetCategory (id, flag) {
+      let arr = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十']
+      try {
+        let menuList = await Api.menuList(id)
+        Res(menuList, data => {
+          if (id === 0) {
+            this.menuList = data
+          } else {
+            let num = Math.floor(Math.random() * 10)
+            let temp = []
+            for (let i = 0; i < num; i++) {
+              temp.push({ name: arr[Math.floor(Math.random() * 10)] })
+            }
+            this.menuList = [].concat(temp, data)
+          }
+          if (!flag) {
+            this.activeCategoryId = id
+          }
+        })
+      } catch (err) {
+        Toast(err.message || '获取分类失败')
+      }
+    },
+
+    // 获取商铺列表
+    async getShopList () {
+      this.offset = 0
+      this.limit = 20
+      let filter = {
+        category_id: this.activeCategoryId,
+        latitude: +this.urlQuery.lat,
+        longitude: +this.urlQuery.lng,
+        offset: this.offset,
+        limit: this.limit,
+        order_by: this.sortBy,
+        delivery_mode: this.deliveryArr,
+        labels: this.shopNatureArr
+      }
+      let shopList = await Api.shopList(filter)
+      this.hideShadow()
+      Res(shopList, data => {
+        this.shopList = data
+        this.$nextTick(() => {
+          /* eslint-disable no-new */
+          this.scrollObj = new BScroll('#scrollWrap', {
+            deceleration: 0.001,
+            bounce: true,
+            swipeTime: 1800,
+            click: true,
+            pullUpLoad: {
+              threshold: -80
+            }
+          })
+          this.pullUpLoad()
+        })
+      })
+    },
+
+    // 上拉加载更多
+    pullUpLoad () {
+      if (!this.scrollObj) return
+      this.scrollObj.on('pullingUp', async () => {
+        if (this.nomore) return
+        if (this.isPullUpLoad) return
+        this.isPullUpLoad = true
+        let filter = {
+          category_id: this.activeCategoryId,
+          latitude: +this.urlQuery.lat,
+          longitude: +this.urlQuery.lng,
+          offset: this.offset,
+          limit: this.limit,
+          order_by: this.sortBy,
+          delivery_mode: this.deliveryArr,
+          labels: this.shopNatureArr
+        }
+        let shopList = await Api.shopList(filter)
+        Res(shopList, data => {
+          this.shopList = this.shopList.concat(data)
+          this.offset += this.limit
+          setTimeout(() => {
+            this.isPullUpLoad = false
+            this.scrollObj.finishPullUp()
+            this.scrollObj.refresh()
+            if (data.length < this.limit) {
+              this.nomore = true
+            }
+          }, 1000)
+        })
+      })
     }
   },
   watch: {
@@ -235,6 +387,7 @@ export default {
     box-sizing: border-box;
     left: 0;
     right: 0;
+    z-index: 9;
     span{
       .flex;
       position: relative;
@@ -478,6 +631,16 @@ export default {
     left: 0;
     right: 0;
     bottom: 0;
+    background: #f0f0f0;
+    .mm-loading{
+      height: 0.5rem;
+      i{
+        animation: xz 1s linear infinite;
+      }
+    }
+    .mm-nomore{
+      .hlh(0.3rem);
+    }
   }
 
   /* 分类样式 */

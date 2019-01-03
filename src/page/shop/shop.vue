@@ -9,9 +9,10 @@
         <div class="shh-info">
           <span><img :src="$store.state.placeholderImg" alt=""></span>
           <div>
-            <h3 class="f18 cf">魏家凉皮</h3>
-            <h5 class="f12 cf">商家配送／分钟送达／配送费¥5</h5>
-            <p class="f12 cf">公告：欢迎光临，用餐高峰请提前下单，谢谢</p>
+            <h3 class="f18 cf">{{shopInfo.name}}</h3>
+            <h5 class="f12 cf">商家配送／{{Math.floor(Math.random() * 50)}}分钟送达／配送费¥{{shopInfo.float_delivery_fee}}</h5>
+            <p class="f12 cf">{{shopInfo.description}}</p>
+            <p class="f12 cf">{{shopInfo.promotion_info}}</p>
           </div>
         </div>
         <i><SvgIcon class="icon-style" iconName="arrow-right-white" /></i>
@@ -31,43 +32,35 @@
         <div class="sc-product" v-if="showProduct" key="sc-product">
           <div class="sc-large pa">
             <ul>
-              <li class="active">
-                <span>热销榜</span>
+              <li v-for="(item, index) in menuList" :key="index" class="active">
+                <span>{{item.name}}</span>
                 <em><img :src="$store.state.placeholderImg" alt=""></em>
                 <i><SvgIcon class="icon-style" iconName="sort" /></i>
               </li>
-              <li>
+              <!-- <li>
                 <span>面条</span>
                 <em><img :src="$store.state.placeholderImg" alt=""></em>
-                <!-- <i><SvgIcon class="icon-style" iconName="sort" /></i> -->
-              </li>
-              <li>
-                <span>肯德基</span>
-                <!-- <em><img :src="$store.state.placeholderImg" alt=""></em> -->
                 <i><SvgIcon class="icon-style" iconName="sort" /></i>
-              </li>
-              <li>
-                <dfn></dfn>
-              </li>
+              </li> -->
             </ul>
           </div>
           <div class="sc-small pa">
-            <dl>
+            <dl v-for="(item, index) in menuList" :key="index">
               <dt>
-                <p><i>热销榜</i><em>风萧萧兮易水寒</em></p>
+                <p><i>{{item.name}}</i><em>{{item.description}}</em></p>
                 <dfn>···</dfn>
               </dt>
               <dd>
                 <ul>
-                  <router-link to="/shop/foodDetail" tag="li">
+                  <router-link v-for="(it, id) in item.foods" :key="id" to="/shop/foodDetail" tag="li">
                     <b><SvgIcon class="icon-style" iconName="new" /></b>
                     <span><img :src="$store.state.placeholderImg" alt=""></span>
                     <div>
-                      <h3>樱桃小丸子<i>新品</i></h3>
-                      <p class="scs-des">食品介绍3</p>
-                      <p class="scs-com">月售966份 好评率53%</p>
+                      <h3>{{it.name}}<i v-for="(t, d) in it.attributes" :key="d">{{t.name}}</i></h3>
+                      <p class="scs-des">{{it.description}}</p>
+                      <p class="scs-com">月售{{it.month_sales}}份 好评率{{((it.rating/5)*100).toFixed()}}%</p>
                       <p class="scs-pri">
-                        <span><i>¥</i><em>20</em></span>
+                        <span><i>¥</i><em>{{it.is_multi ? '1010' : it.single_spec.current_price}}</em></span>
                         <span>
                           <transition name="slide-fade">
                             <strong v-show="singleNum > 0" @click.stop="reduce('single')">
@@ -82,7 +75,8 @@
                       </p>
                     </div>
                   </router-link>
-                  <router-link to="/shop/foodDetail" tag="li">
+                  <!-- 多规格demo -->
+                  <!-- <router-link to="/shop/foodDetail" tag="li">
                     <b><SvgIcon class="icon-style" iconName="new" /></b>
                     <span><img :src="$store.state.placeholderImg" alt=""></span>
                     <div>
@@ -102,7 +96,7 @@
                         </span>
                       </p>
                     </div>
-                  </router-link>
+                  </router-link> -->
                 </ul>
               </dd>
             </dl>
@@ -188,8 +182,13 @@
 </template>
 
 <script>
+// import BScroll from 'better-scroll'
+import { Toast } from 'mint-ui'
+import Va from '@lib/js/validator'
+import Api from '@src/service/api'
+import Res from '@src/service/res'
 import Rate from 'vue-tiny-rate'
-import BuyCart from '../../components/buyCart'
+import BuyCart from '@src/components/buyCart'
 
 export default {
   data () {
@@ -197,21 +196,46 @@ export default {
       showShadow: false,
       showProduct: true,
       singleNum: 0,
-      multiNum: 0
+      multiNum: 0,
+      shopId: 0,
+      shopInfo: {},
+      menuList: []
     }
   },
   created () {
-
+    this.shopId = this.$route.params.shopid
   },
   mounted () {
-
+    this.initData()
   },
   components: {
     Rate,
     BuyCart
   },
   computed: {
-
+    // getMinPrice (arr) {
+    //   return function (arr) {
+    //     let compare = function (pro) {
+    //       return function (obj1, obj2) {
+    //         var val1 = obj1[pro]
+    //         var val2 = obj2[pro]
+    //         if (val1 > val2) {
+    //           return 1
+    //         } else if (val1 < val2) {
+    //           return -1
+    //         } else {
+    //           return 0
+    //         }
+    //       }
+    //     }
+    //     arr = arr.sort(compare('current_price'))
+    //     let str = arr[0].current_price
+    //     if (arr.length > 1) {
+    //       str += '~' + arr[arr.length - 1].current_price
+    //     }
+    //     return 100
+    //   }
+    // }
   },
   methods: {
     // tab切换
@@ -234,6 +258,37 @@ export default {
         this.multiNum++
       }
       this.$refs.buyCart.addToCart()
+    },
+
+    async initData () {
+      try {
+        let shop = await Api.shopDetail(this.shopId)
+        Res(shop, data => {
+          this.shopInfo = data
+        })
+
+        let menuList = await Api.menuList(0)
+        Res(menuList, data => {
+          this.menuList = data
+        })
+      } catch (err) {
+        Toast(err.message || '获取商铺详情失败')
+      }
+    },
+
+    // 属性排序方式
+    compare (pro) {
+      return function (obj1, obj2) {
+        var val1 = obj1[pro]
+        var val2 = obj2[pro]
+        if (val1 > val2) {
+          return 1
+        } else if (val1 < val2) {
+          return -1
+        } else {
+          return 0
+        }
+      }
     }
   },
   watch: {
@@ -452,9 +507,8 @@ export default {
                   border-radius: 2px;
                   color: red;
                   font-size: 0.12rem;
-                  position: absolute;
-                  right: 0;
-                  top: 0;
+                  float: right;
+                  margin-left: 0.02rem;
                 }
               }
               .scs-des{

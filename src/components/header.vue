@@ -45,7 +45,7 @@ export default {
     async initData () {
       try {
         // 获取当前登录态
-        let userInfo = await Api.getUserInfo()
+        let userInfo = await Api.userInfo()
         Res(userInfo, data => {
           this.Set_UserInfo(data)
         }, false)

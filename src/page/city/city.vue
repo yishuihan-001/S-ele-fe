@@ -21,7 +21,7 @@
               </li>
             </template>
             <template v-else>
-              <li to="/msite" v-for="(item, index) in placeSearch" :key="index" @click="goCity(item, 1)">
+              <li v-for="(item, index) in placeSearch" :key="index" @click="goCity(item, 1)">
                 <h3>{{item.title}}</h3>
                 <p>{{item.address}}</p>
               </li>

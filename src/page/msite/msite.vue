@@ -16,7 +16,7 @@
           <mt-swipe :auto="4000">
             <mt-swipe-item v-for="(item, index) in shopCategoryList" :key="index">
               <ul class="mc-panel">
-                <router-link tag="li" to="/food" v-for="(it, id) in item" :key="id">
+                <router-link tag="li" v-for="(it, id) in item" :key="id" :to="'/food?' + 'id=' + it.id + '&title=' + it.title + '&lat=' + latitude + '&lng=' + longitude">
                   <span><img :src="it.image_url" alt=""></span>
                   <p>{{it.title}}</p>
                 </router-link>
@@ -31,6 +31,14 @@
             <span class="c6">附近商家</span>
           </h3>
           <ShopList :shopList="shopList"/>
+          <div class="mm-loading flex" v-if="isPullUpLoad">
+            <i class="flex"><SvgIcon class="icon-style" iconName="loading" /></i>
+            <span>...正在加载...</span>
+            <i class="flex"><SvgIcon class="icon-style" iconName="loading" /></i>
+          </div>
+          <div class="mm-nomore tac" v-if="nomore">
+            <p>没有更多数据了</p>
+          </div>
         </div>
       </div>
     </div>
@@ -77,7 +85,7 @@ export default {
       limit: 20,
       scrollObj: null,
       isPullUpLoad: false,
-      num: 0
+      nomore: false
     }
   },
   created () {
@@ -141,7 +149,7 @@ export default {
             swipeTime: 1800,
             click: true,
             pullUpLoad: {
-              threshold: -50
+              threshold: -80
             }
           })
           this.pullUpLoad()
@@ -155,19 +163,21 @@ export default {
     pullUpLoad () {
       if (!this.scrollObj) return
       this.scrollObj.on('pullingUp', async () => {
+        if (this.nomore) return
         if (this.isPullUpLoad) return
         this.isPullUpLoad = true
-        console.log(this.num++)
         let shopList = await Api.shopList({ latitude: this.latitude, longitude: this.longitude, offset: this.offset, limit: this.limit })
         Res(shopList, data => {
           this.shopList = this.shopList.concat(data)
           this.offset += this.limit
-          this.$nextTick(() => {
-            setTimeout(() => {
-              this.isPullUpLoad = false
-              this.scrollObj.finishPullUp()
-            }, 1000)
-          })
+          setTimeout(() => {
+            this.isPullUpLoad = false
+            this.scrollObj.finishPullUp()
+            this.scrollObj.refresh()
+            if (data.length < this.limit) {
+              this.nomore = true
+            }
+          }, 1000)
         })
       })
     }
@@ -237,6 +247,23 @@ export default {
     span{
       margin-left: 0.05rem;
     }
+  }
+  .mm-loading{
+    height: 0.5rem;
+    i{
+      animation: xz 1s linear infinite;
+    }
+  }
+  .mm-nomore{
+    .hlh(0.3rem);
+  }
+}
+@keyframes xz{
+  from{
+    transform: rotate(0deg);
+  }
+  to{
+    transform: rotate(360deg);
   }
 }
 </style>

@@ -12,27 +12,27 @@ let Api = {}
 Api.getCity = data => fetch('/city/target', data)
 
 /**
- * 搜索地址
- */
-Api.searchPlace = data => fetch('/city/search', data)
-
-/**
  * 通过id获取城市信息
  */
 Api.getCityById = data => fetch('/city/getCityById/' + data)
 
 /**
+ * 搜索地址
+ */
+Api.searchPlace = data => fetch('/city/search', data)
+
+/**
  * 用户
  */
 /**
- * 获取用户信息
- */
-Api.getUserInfo = () => fetch('/user/userInfo')
-
-/**
- * 登录
+ * 登录 没有账号自动创建账号
  */
 Api.userLogin = data => fetch('/user/login', data, 'post')
+
+/**
+ * 获取用户信息
+ */
+Api.userInfo = () => fetch('/user/userInfo')
 
 /**
  * 退出登录
@@ -48,14 +48,39 @@ Api.userChangePassword = data => fetch('/user/changePassword', data, 'post')
  * 商铺
  */
 /**
- * 商铺分类
+ * 获取商品列表
+ */
+Api.foodList = data => fetch('/shopping/food/getList', data)
+
+/**
+ * 获取所有商铺分类
  */
 Api.shopCategoryAll = () => fetch('/shopping/category/all')
 
 /**
- * 商铺列表
+ * 获取所有配送方式
+ */
+Api.shopDeliveryAll = () => fetch('/shopping/delivery/all')
+
+/**
+ * 获取所有商家属性标签
+ */
+Api.shopLabelAll = () => fetch('/shopping/label/all')
+
+/**
+ * 获取商铺详情
+ */
+Api.shopDetail = data => fetch('/shopping/shop/detail/' + data)
+
+/**
+ * 获取商铺列表
  */
 Api.shopList = data => fetch('/shopping/shop/getList', data, 'post')
+
+/**
+ * 获取商品分类
+ */
+Api.menuList = data => fetch('/shopping/menu/getMenu/' + data)
 
 /**
  * 其他
