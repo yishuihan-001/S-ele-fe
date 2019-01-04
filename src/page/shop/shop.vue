@@ -29,8 +29,8 @@
 
     <div class="s-con pr">
       <transition name="scon-fade" mode="out-in">
-        <div class="sc-product" v-if="showProduct" key="sc-product">
-          <div class="sc-large pa">
+        <div class="sc-product bf" v-if="showProduct" key="sc-product">
+          <div class="sc-large pa" id="scrollWrapLarge">
             <ul>
               <li v-for="(item, index) in menuList" :key="index" class="active">
                 <span>{{item.name}}</span>
@@ -44,62 +44,65 @@
               </li> -->
             </ul>
           </div>
-          <div class="sc-small pa">
-            <dl v-for="(item, index) in menuList" :key="index">
-              <dt>
-                <p><i>{{item.name}}</i><em>{{item.description}}</em></p>
-                <dfn>···</dfn>
-              </dt>
-              <dd>
-                <ul>
-                  <router-link v-for="(it, id) in item.foods" :key="id" to="/shop/foodDetail" tag="li">
-                    <b><SvgIcon class="icon-style" iconName="new" /></b>
-                    <span><img :src="$store.state.placeholderImg" alt=""></span>
-                    <div>
-                      <h3>{{it.name}}<i v-for="(t, d) in it.attributes" :key="d">{{t.name}}</i></h3>
-                      <p class="scs-des">{{it.description}}</p>
-                      <p class="scs-com">月售{{it.month_sales}}份 好评率{{((it.rating/5)*100).toFixed()}}%</p>
-                      <p class="scs-pri">
-                        <span><i>¥</i><em>{{it.is_multi ? '1010' : it.single_spec.current_price}}</em></span>
-                        <span>
-                          <transition name="slide-fade">
-                            <strong v-show="singleNum > 0" @click.stop="reduce('single')">
-                              <SvgIcon class="icon-style" iconName="reduce"/>
+          <div class="sc-small pa" id="scrollWrapSmall">
+            <div class="scm_wrap">
+              <dl v-for="(item, index) in menuList" :key="index">
+                <dt>
+                  <p><i>{{item.name}}</i><em>{{item.description}}</em></p>
+                  <dfn>···</dfn>
+                </dt>
+                <dd>
+                  <ul>
+                    <router-link v-for="(it, id) in item.foods" :key="id" to="/shop/foodDetail" tag="li">
+                      <b><SvgIcon class="icon-style" iconName="new" /></b>
+                      <span><img :src="$store.state.placeholderImg" alt=""></span>
+                      <div>
+                        <h3>{{it.name}}<i v-for="(t, d) in it.attributes" :key="d">{{t.name}}</i></h3>
+                        <p class="scs-des">{{it.description}}</p>
+                        <p class="scs-com">月售{{it.month_sales}}份 好评率{{((it.rating/5)*100).toFixed()}}%</p>
+                        <p class="scs-pri">
+                          <span><i>¥</i><em>{{it.is_multi ? getMultiPrice(it.multi_spec) : it.single_spec.current_price}}</em></span>
+                          <span>
+                            <transition name="slide-fade">
+                              <strong v-show="singleNum > 0" @click.stop="reduce('single')">
+                                <SvgIcon class="icon-style" iconName="reduce"/>
+                              </strong>
+                            </transition>
+                            <b v-show="singleNum > 0">{{singleNum}}</b>
+                            <strong v-if="!it.is_multi" @click.stop="add('single')">
+                              <SvgIcon class="icon-style add" iconName="add"/>
                             </strong>
-                          </transition>
-                          <b v-show="singleNum > 0">{{singleNum}}</b>
-                          <strong  @click.stop="add('single')">
-                            <SvgIcon class="icon-style add" iconName="add"/>
-                          </strong>
-                        </span>
-                      </p>
-                    </div>
-                  </router-link>
-                  <!-- 多规格demo -->
-                  <!-- <router-link to="/shop/foodDetail" tag="li">
-                    <b><SvgIcon class="icon-style" iconName="new" /></b>
-                    <span><img :src="$store.state.placeholderImg" alt=""></span>
-                    <div>
-                      <h3>秘制凉皮<i>新品</i></h3>
-                      <p class="scs-des">食品介绍3</p>
-                      <p class="scs-com">月售966份 好评率53%</p>
-                      <p class="scs-pri">
-                        <span><i>¥</i><em>20</em></span>
-                        <span>
-                          <transition name="slide-fade">
-                            <strong v-show="multiNum > 0" @click.stop="reduce('multi')">
-                              <SvgIcon class="icon-style" iconName="reduce"/>
-                            </strong>
-                          </transition>
-                          <b v-show="multiNum > 0">{{multiNum}}</b>
-                          <dfn @click.stop="add('multi')">选规格</dfn>
-                        </span>
-                      </p>
-                    </div>
-                  </router-link> -->
-                </ul>
-              </dd>
-            </dl>
+                            <dfn v-else @click.stop="add('multi')">选规格</dfn>
+                          </span>
+                        </p>
+                      </div>
+                    </router-link>
+                    <!-- 多规格demo -->
+                    <!-- <router-link to="/shop/foodDetail" tag="li">
+                      <b><SvgIcon class="icon-style" iconName="new" /></b>
+                      <span><img :src="$store.state.placeholderImg" alt=""></span>
+                      <div>
+                        <h3>秘制凉皮<i>新品</i></h3>
+                        <p class="scs-des">食品介绍3</p>
+                        <p class="scs-com">月售966份 好评率53%</p>
+                        <p class="scs-pri">
+                          <span><i>¥</i><em>20</em></span>
+                          <span>
+                            <transition name="slide-fade">
+                              <strong v-show="multiNum > 0" @click.stop="reduce('multi')">
+                                <SvgIcon class="icon-style" iconName="reduce"/>
+                              </strong>
+                            </transition>
+                            <b v-show="multiNum > 0">{{multiNum}}</b>
+                            <dfn @click.stop="add('multi')">选规格</dfn>
+                          </span>
+                        </p>
+                      </div>
+                    </router-link> -->
+                  </ul>
+                </dd>
+              </dl>
+            </div>
           </div>
           <div class="sc-cart pa">
             <BuyCart :showShadow.sync="showShadow" ref="buyCart"/>
@@ -175,6 +178,18 @@
         </div>
       </transition>
     </div>
+    <Dialog :show="showDialog" @click.native="showDialog=false"/>
+    <!-- 多规格弹窗 -->
+    <div class="s-multi pa bf" v-show="showDialog">
+      <h3><span class="f16 fwb">名称：</span><b class="f16 fwb">魏家凉皮</b></h3>
+      <h3><span class="f16 fwb">价格：</span><b class="f16 fwb">¥199</b></h3>
+      <ul class="oh">
+        <li class="active">大</li>
+        <li>中</li>
+        <li>小</li>
+      </ul>
+      <p><span @click="showDialog=false">取消</span><span class="active">确定</span></p>
+    </div>
     <transition name="router-slid" mode="out-in">
         <router-view></router-view>
     </transition>
@@ -182,7 +197,7 @@
 </template>
 
 <script>
-// import BScroll from 'better-scroll'
+import BScroll from 'better-scroll'
 import { Toast } from 'mint-ui'
 import Va from '@lib/js/validator'
 import Api from '@src/service/api'
@@ -193,13 +208,14 @@ import BuyCart from '@src/components/buyCart'
 export default {
   data () {
     return {
-      showShadow: false,
-      showProduct: true,
-      singleNum: 0,
-      multiNum: 0,
-      shopId: 0,
-      shopInfo: {},
-      menuList: []
+      showShadow: false, // 购物车遮罩
+      showProduct: true, // 是否显示商品
+      singleNum: 0, // 单规格商品
+      multiNum: 0, // 多规格商品
+      shopId: 0, // 商铺id
+      shopInfo: {}, // 商铺信息
+      menuList: [], // 分类列表
+      showDialog: true // 普通遮罩
     }
   },
   created () {
@@ -213,29 +229,23 @@ export default {
     BuyCart
   },
   computed: {
-    // getMinPrice (arr) {
-    //   return function (arr) {
-    //     let compare = function (pro) {
-    //       return function (obj1, obj2) {
-    //         var val1 = obj1[pro]
-    //         var val2 = obj2[pro]
-    //         if (val1 > val2) {
-    //           return 1
-    //         } else if (val1 < val2) {
-    //           return -1
-    //         } else {
-    //           return 0
-    //         }
-    //       }
-    //     }
-    //     arr = arr.sort(compare('current_price'))
-    //     let str = arr[0].current_price
-    //     if (arr.length > 1) {
-    //       str += '~' + arr[arr.length - 1].current_price
-    //     }
-    //     return 100
-    //   }
-    // }
+    // 多规格商品价格区间
+    getMultiPrice (arr) {
+      return function (arr) {
+        let temp = []
+        let str
+        arr.forEach(item => {
+          if (temp.indexOf(item.current_price) < 0) {
+            temp.push(item.current_price)
+          }
+        })
+        str = Math.min.apply(null, temp)
+        if (temp.length > 1) {
+          str += '~' + Math.max.apply(null, temp)
+        }
+        return str
+      }
+    }
   },
   methods: {
     // tab切换
@@ -270,26 +280,27 @@ export default {
         let menuList = await Api.menuList(0)
         Res(menuList, data => {
           this.menuList = data
+          this.$nextTick(() => {
+            /* eslint-disable no-new */
+            new BScroll('#scrollWrapLarge', {
+              deceleration: 0.001,
+              bounce: true,
+              swipeTime: 1800,
+              click: true
+            })
+            new BScroll('#scrollWrapSmall', {
+              deceleration: 0.001,
+              bounce: true,
+              swipeTime: 1800,
+              click: true
+            })
+          })
         })
       } catch (err) {
         Toast(err.message || '获取商铺详情失败')
       }
-    },
-
-    // 属性排序方式
-    compare (pro) {
-      return function (obj1, obj2) {
-        var val1 = obj1[pro]
-        var val2 = obj2[pro]
-        if (val1 > val2) {
-          return 1
-        } else if (val1 < val2) {
-          return -1
-        } else {
-          return 0
-        }
-      }
     }
+
   },
   watch: {
 
@@ -455,6 +466,9 @@ export default {
         right: 0;
         overflow: auto;
         padding-bottom: 1rem;
+        .scm_wrap{
+          padding-bottom: 0.5rem;
+        }
         dl{
           overflow: hidden;
           dt{
@@ -705,48 +719,102 @@ export default {
       }
     }
   }
+
+  /* 多规格弹窗 */
+  .s-multi{
+    .bg(#fff);
+    width: 3rem;
+    height: auto;
+    min-height: 2rem;
+    border-radius: 5px;
+    top: 50%;
+    left: 50%;
+    margin-top: -1.5rem;
+    margin-left: -1.5rem;
+    padding: 0.2rem;
+    box-sizing: border-box;
+    h3{
+      line-height: 0.3rem;
+    }
+    ul{
+      padding: 0.1rem 0;
+      li{
+        .hlh(0.3rem);
+        .border(@c-blue, solid, 1px);
+        font-size: 0.16rem;
+        text-align: center;
+        float: left;
+        border-radius: 2px;
+        width: auto;
+        min-width: 0.5rem;
+        margin-right: 0.1rem;
+      }
+      li.active{
+        .bg(@c-blue);
+        color: #fff;
+      }
+    }
+    p{
+      .flex;
+      .hlh(0.28rem);
+      justify-content: space-around;
+      padding-top: 0.1rem;
+      span{
+        .wh(0.8rem, 0.28rem);
+        .border(@c-green, solid, 1px);
+        color: #666;
+        text-align: center;
+        border-radius: 2px;
+      }
+      span.active{
+        .bg(@c-green);
+        color: #fff;
+      }
+    }
+  }
+
   /* 容器内元素过渡 */
-.scon-fade-enter-active, .scon-fade-leave-active {
-  transition: opacity .3s ease;
-}
-.scon-fade-enter, .scon-fade-leave-to
-/* .component-fade-leave-active for below version 2.1.8 */ {
-  opacity: 0;
-}
+  .scon-fade-enter-active, .scon-fade-leave-active {
+    transition: opacity .3s ease;
+  }
+  .scon-fade-enter, .scon-fade-leave-to
+  /* .component-fade-leave-active for below version 2.1.8 */ {
+    opacity: 0;
+  }
 
-/* 可以设置不同的进入和离开动画 */
-/* 设置持续时间和动画函数 */
-.slide-fade-enter-active {
-  transition: all .3s ease;
-}
-.slide-fade-leave-active {
-  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
-}
-.slide-fade-enter, .slide-fade-leave-to
-/* .slide-fade-leave-active for below version 2.1.8 */ {
-  transform: translateX(10px);
-  opacity: 0;
-}
+  /* 可以设置不同的进入和离开动画 */
+  /* 设置持续时间和动画函数 */
+  .slide-fade-enter-active {
+    transition: all .3s ease;
+  }
+  .slide-fade-leave-active {
+    transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+  }
+  .slide-fade-enter, .slide-fade-leave-to
+  /* .slide-fade-leave-active for below version 2.1.8 */ {
+    transform: translateX(10px);
+    opacity: 0;
+  }
 
-/* 购物车区域 */
-.sc-cart{
-  .bg(pink);
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 0.5rem;
-  z-index: 6;
-}
+  /* 购物车区域 */
+  .sc-cart{
+    .bg(pink);
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 0.5rem;
+    z-index: 6;
+  }
 
-/* 遮罩 */
-.s-shadow{
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: #000;
-  opacity: 0.3;
-  z-index: 3;
-}
+  /* 遮罩 */
+  .s-shadow{
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #000;
+    opacity: 0.3;
+    z-index: 3;
+  }
 
 </style>

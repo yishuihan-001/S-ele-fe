@@ -58,11 +58,11 @@ import Header from '@src/components/header'
 export default {
   data () {
     return {
-      currCity: null,
-      searchPlace: '',
-      placeHistory: [],
-      placeSearch: [],
-      showHistory: true
+      currCity: null, // 当前城市
+      searchPlace: '', // 搜索关键词
+      placeHistory: [], // 历史搜索记录
+      placeSearch: [], // 当前关键词搜索结果
+      showHistory: true // 是否显示历史搜索记录
     }
   },
   created () {

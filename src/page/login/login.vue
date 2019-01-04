@@ -52,10 +52,10 @@ import Header from '@src/components/header'
 export default {
   data () {
     return {
-      username: '',
-      password: '',
-      verifycode: '',
-      codeSrc: ''
+      username: '', // 用户名
+      password: '', // 密码
+      verifycode: '', // 验证码
+      codeSrc: '' // 验证码图片
     }
   },
   created () {

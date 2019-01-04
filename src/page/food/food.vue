@@ -124,23 +124,22 @@ export default {
     return {
       showFshadow: false, // 是否显示遮罩
       activeTab: '', // 当前显示的tab
-      sortBy: 0,
-      deliveryArr: [],
-      shopNatureArr: [],
-      selectLen: 0,
-
-      shopCategoryList: [],
-      urlQuery: {},
-      deliveryList: [],
-      labelList: [],
-      activeCategoryId: 0,
-      menuList: [],
-      offset: 0,
-      limit: 20,
-      shopList: [],
-      scrollObj: null,
-      isPullUpLoad: false,
-      nomore: false
+      sortBy: 0, // 排序方式
+      deliveryArr: [], // 已选配送方式
+      shopNatureArr: [], // 已选商家属性
+      selectLen: 0, // 已选项数量
+      shopCategoryList: [], // 商铺种类列表
+      urlQuery: {}, // 入参
+      deliveryList: [], // 所有配送方式
+      labelList: [], // 所有商家属性
+      activeCategoryId: 0, // 当前商铺类型
+      menuList: [], // 食品分类列表
+      offset: 0, // 索引
+      limit: 20, // 条数
+      shopList: [], // 商铺列表
+      scrollObj: null, // 滚动对象
+      isPullUpLoad: false, // 正在加载
+      nomore: false // 没有更多
     }
   },
   created () {
@@ -278,6 +277,10 @@ export default {
     },
 
     // 获取目标种类下的分类
+    /**
+     * 此处id必传，传入不存在的id，则返回所有分类，否则返回该商铺下的分类
+     * 当传入商铺id时，鉴于商铺下食品种类较少，故对返回的数据进行处理，随机添加分类
+     */
     async targetCategory (id, flag) {
       let arr = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十']
       try {

@@ -49,12 +49,12 @@ import Header from '@src/components/header'
 export default {
   data () {
     return {
-      username: '',
-      oldpassWord: '',
-      newpassword: '',
-      confirmpassword: '',
-      verifycode: '',
-      codeSrc: ''
+      username: '', // 用户名
+      oldpassWord: '', // 旧密码
+      newpassword: '', // 新密码
+      confirmpassword: '', // 确认新密码
+      verifycode: '', // 验证码
+      codeSrc: '' // 验证码图片
     }
   },
   created () {

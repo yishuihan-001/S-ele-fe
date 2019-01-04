@@ -77,15 +77,15 @@ export default {
         'https://fuss10.elemecdn.com/a/78/0fb469b2da210827ec16896e00420jpeg.jpeg?imageMogr/format/webp/thumbnail/!90x90r/gravity/Center/crop/90x90/',
         'https://fuss10.elemecdn.com/b/7f/432619fb21a40b05cd25d11eca02djpeg.jpeg?imageMogr/format/webp/thumbnail/!90x90r/gravity/Center/crop/90x90/'
       ],
-      shopCategoryList: [],
-      shopList: [],
-      latitude: 0,
-      longitude: 0,
-      offset: 0,
-      limit: 20,
-      scrollObj: null,
-      isPullUpLoad: false,
-      nomore: false
+      shopCategoryList: [], // 商铺分类列表（入口列表）
+      shopList: [], // 商铺列表
+      latitude: 0, // 经度
+      longitude: 0, // 纬度
+      offset: 0, // 索引
+      limit: 20, // 条数
+      scrollObj: null, // 滚动对象
+      isPullUpLoad: false, // 正在加载
+      nomore: false // 没有更多
     }
   },
   created () {
