@@ -95,7 +95,7 @@
 
       <div class="f-con pa" id="scrollWrap">
         <div class="bf">
-          <ShopList :shopList="shopList"/>
+          <ShopList :shopList="shopList" :lat="urlQuery.lat" :lng="urlQuery.lng"/>
           <div class="mm-loading flex" v-if="isPullUpLoad">
             <i class="flex"><SvgIcon class="icon-style" iconName="loading" /></i>
             <span>...正在加载...</span>
@@ -325,15 +325,19 @@ export default {
         this.shopList = data
         this.$nextTick(() => {
           /* eslint-disable no-new */
-          this.scrollObj = new BScroll('#scrollWrap', {
-            deceleration: 0.001,
-            bounce: true,
-            swipeTime: 1800,
-            click: true,
-            pullUpLoad: {
-              threshold: -80
-            }
-          })
+          if (!this.scrollObj) {
+            this.scrollObj = new BScroll('#scrollWrap', {
+              deceleration: 0.001,
+              bounce: true,
+              swipeTime: 1800,
+              click: true,
+              pullUpLoad: {
+                threshold: -80
+              }
+            })
+          } else {
+            this.scrollObj.refresh()
+          }
           this.pullUpLoad()
         })
       })

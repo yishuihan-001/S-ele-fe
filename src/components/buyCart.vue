@@ -2,46 +2,51 @@
   <div class="buycart">
     <div class="b-digest">
       <div class="bd-info">
-        <h3><i>¥</i> <em>0.00</em></h3>
-        <p>配送费¥5</p>
+        <h3><i>¥</i> <em>{{totalPrice}}</em></h3>
+        <p>配送费¥{{float_delivery_fee}}</p>
       </div>
-      <div class="bd-topay active">
-        <em>还差20起送</em>
-        <router-link tag="span" to="/confirmOrder">去结算</router-link>
+      <div :class="['bd-topay', float_minimum_order_amount - totalPrice > 0 ? '' : 'active']">
+        <em v-if="float_minimum_order_amount - totalPrice > 0">还差{{float_minimum_order_amount - totalPrice}}起送</em>
+        <router-link v-else tag="span" to="/confirmOrder">去结算</router-link>
       </div>
-      <div :class="['bd-cart', 'pa', bounce ? 'bounce' : '']" @click="showList">
+      <div :class="['bd-cart', 'pa', bounce ? 'bounce' : '', manifest.length ? 'active' : '']" @click="showList">
         <i><SvgIcon class="icon-style" iconName="cart"/></i>
       </div>
     </div>
 
     <transition name="toggle-cart">
-      <div class="b-productList pa" v-show="showProductList">
+      <div class="b-productList pa" v-show="showShadow">
         <div class="bp-title">
-          <span class="c6">购物车</span><em><i><SvgIcon class="icon-style" iconName="delete" /></i><dfn class="f14 c9">清空</dfn></em>
+          <span class="c6">购物车</span><em><i><SvgIcon class="icon-style" iconName="delete" /></i><dfn class="f14 c9" @click="cleanManifest">清空</dfn></em>
         </div>
-        <ul class="bp-list">
-          <li>
-            <div class="bpl-left">
-              <span>肯德基</span><em>¥20</em>
-            </div>
-            <div class="bpl-right">
-              <i><SvgIcon class="icon-style" iconName="reduce"/></i>
-              <b>123</b>
-              <i><SvgIcon class="icon-style add" iconName="add"/></i>
-            </div>
-          </li>
-        </ul>
+        <div class="bg-listWrap" id="scrollWrap">
+          <ul class="bp-list">
+            <li v-for="(item, index) in manifest" :key="index">
+              <div class="bpl-left">
+                <span>{{item.name}}<dfn v-if="item.label">({{item.label}})</dfn></span><em>¥{{item.price}}</em>
+              </div>
+              <div class="bpl-right">
+                <i @click="reduce(item)"><SvgIcon class="icon-style" iconName="reduce"/></i>
+                <b>{{item.quantity}}</b>
+                <i @click="add(item)"><SvgIcon class="icon-style add" iconName="add"/></i>
+              </div>
+            </li>
+          </ul>
+        </div>
       </div>
     </transition>
   </div>
 </template>
 
 <script>
+import { Toast } from 'mint-ui'
+import BScroll from 'better-scroll'
 export default {
   data () {
     return {
-      showProductList: false,
-      bounce: false
+      bounce: false,
+      totalPrice: 0,
+      scrollObj: null
     }
   },
   created () {
@@ -50,6 +55,7 @@ export default {
   mounted () {
 
   },
+  props: ['showShadow', 'manifest', 'float_delivery_fee', 'float_minimum_order_amount'],
   components: {
 
   },
@@ -57,19 +63,72 @@ export default {
 
   },
   methods: {
+    // 是否显示清单
     showList () {
-      this.showProductList = !this.showProductList
-      this.$emit('update:showShadow', this.showProductList)
+      if (!this.manifest.length) {
+        return Toast('您的购物车空空如也哦~')
+      }
+      this.$emit('update:showShadow', !this.showShadow)
     },
+
+    // 添加到购物车
     addToCart () {
       this.bounce = true
       setTimeout(() => {
         this.bounce = false
       }, 500)
+    },
+
+    // 重置
+    resetData () {
+      let price = 0
+      this.manifest.forEach(item => {
+        price += item.price * item.quantity
+      })
+      this.totalPrice = price.toFixed(2)
+
+      this.$nextTick(() => {
+        if (!this.scrollObj) {
+          /* eslint-disable no-new */
+          this.scrollObj = new BScroll('#scrollWrap', {
+            deceleration: 0.001,
+            bounce: true,
+            swipeTime: 1800,
+            click: true
+          })
+        } else {
+          this.scrollObj.refresh()
+        }
+      })
+    },
+
+    // 从购物车删除
+    reduce (item) {
+      this.$emit('reduceManifest', item)
+    },
+
+    // 从购物车添加
+    add (item) {
+      this.$emit('addManifest', item)
+    },
+
+    // 从购物车清空
+    cleanManifest () {
+      this.$emit('cleanManifest')
     }
   },
   watch: {
-
+    // manifest (value) {
+    //   console.log(value)
+    // }
+    manifest: {
+      handler (newValue, oldValue) {
+        this.manifest = newValue
+        this.resetData()
+      },
+      immediate: true,
+      deep: true
+    }
   }
 }
 </script>
@@ -142,7 +201,7 @@ export default {
         }
       }
     }
-    .bd-cart.bounce{
+    .active.active{
       .bg(@c-blue);
     }
   }
@@ -170,37 +229,43 @@ export default {
         }
       }
     }
-    .bp-list{
-      .bg(#fff);
-      li{
-        .hlh(0.52rem);
-        .flex;
-        justify-content: space-between;
-        padding-left: 0.1rem;
-        .bpl-left{
+    .bg-listWrap{
+      .bg(#ccc);
+      height: auto;
+      max-height: 5rem;
+      overflow: hidden;
+      .bp-list{
+        .bg(#fff);
+        li{
+          .hlh(0.52rem);
           .flex;
-          flex-grow: 1;
           justify-content: space-between;
-          span{
-            font-size: 0.16rem;
-            font-weight: bold;
-          }
-          em{
-            color: @c-redyellow;
-            font-weight: bold;
-          }
-        }
-        .bpl-right{
-          .flex;
-          width: 1rem;
-          b{
-            margin: 0 0.05rem;
-          }
-          i{
+          padding-left: 0.1rem;
+          .bpl-left{
             .flex;
+            flex-grow: 1;
+            justify-content: space-between;
+            span{
+              font-size: 0.16rem;
+              font-weight: bold;
+            }
+            em{
+              color: @c-redyellow;
+              font-weight: bold;
+            }
           }
-          .icon-style.add{
-            .wh(0.18rem);
+          .bpl-right{
+            .flex;
+            width: 1rem;
+            b{
+              margin: 0 0.05rem;
+            }
+            i{
+              .flex;
+            }
+            .icon-style.add{
+              .wh(0.18rem);
+            }
           }
         }
       }

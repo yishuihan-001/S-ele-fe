@@ -1,6 +1,6 @@
 <template>
   <ul class="shopList oh">
-    <router-link tag="li" :to="'/shop/' + item.id" v-for="(item, index) in shopList" :key="index">
+    <router-link tag="li" :to="'/shop/' + item.id + '?lat=' + lat + '&lng=' + lng + '&ti=' + item.durationText" v-for="(item, index) in shopList" :key="index">
       <div class="s-left"><img :src="imgList[Math.floor(Math.random() * 20)]" alt=""></div>
       <!-- <div class="s-left"><img :src="$store.state.placeholderImg" alt=""></div> -->
       <div class="s-right">
@@ -61,7 +61,7 @@ export default {
   created () {
 
   },
-  props: ['shopList'],
+  props: ['shopList', 'lat', 'lng'],
   mounted () {
 
   },

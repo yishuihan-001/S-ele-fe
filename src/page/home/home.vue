@@ -54,7 +54,8 @@ export default {
   data () {
     return {
       cityHot: [], // 热门城市
-      cityGroup: [] // 城市列表
+      cityGroup: [], // 城市列表
+      scrollObj: null
     }
   },
   created () {
@@ -103,13 +104,17 @@ export default {
           }
           this.cityGroup = sortobj
           this.$nextTick(() => {
-            /* eslint-disable no-new */
-            new BScroll('#scrollWrap', {
-              deceleration: 0.001,
-              bounce: true,
-              swipeTime: 1800,
-              click: true
-            })
+            if (!this.scrollObj) {
+              /* eslint-disable no-new */
+              this.scrollObj = new BScroll('#scrollWrap', {
+                deceleration: 0.001,
+                bounce: true,
+                swipeTime: 1800,
+                click: true
+              })
+            } else {
+              this.scrollObj.refresh()
+            }
           })
         })
       } catch (err) {

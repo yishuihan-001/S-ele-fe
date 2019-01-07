@@ -1,7 +1,7 @@
 <template>
   <div class="container shop">
     <transition name="scon-fade">
-      <div class="s-shadow pa" v-show="showShadow"></div>
+      <div class="s-shadow pa" v-show="showShadow" @click="showShadow = false"></div>
     </transition>
     <div class="s-header pr">
       <div class="sh-back pa" @click="$router.back()"><SvgIcon class="icon-style" iconName="arrow-left"/></div>
@@ -10,7 +10,7 @@
           <span><img :src="$store.state.placeholderImg" alt=""></span>
           <div>
             <h3 class="f18 cf">{{shopInfo.name}}</h3>
-            <h5 class="f12 cf">商家配送／{{Math.floor(Math.random() * 50)}}分钟送达／配送费¥{{shopInfo.float_delivery_fee}}</h5>
+            <h5 class="f12 cf">商家配送／{{durationText}}送达／配送费¥{{shopInfo.float_delivery_fee}}</h5>
             <p class="f12 cf">{{shopInfo.description}}</p>
             <p class="f12 cf">{{shopInfo.promotion_info}}</p>
           </div>
@@ -30,23 +30,18 @@
     <div class="s-con pr">
       <transition name="scon-fade" mode="out-in">
         <div class="sc-product bf" v-if="showProduct" key="sc-product">
-          <div class="sc-large pa" id="scrollWrapLarge">
+          <div class="sc-large pa" id="scrollWrapLarge" ref="scrollWrapLarge">
             <ul>
-              <li v-for="(item, index) in menuList" :key="index" class="active">
+              <li v-for="(item, index) in menuList" :key="index" :class="{active: index === currentIndex(index)}" @click="handleGoodsItem(index)">
                 <span>{{item.name}}</span>
                 <em><img :src="$store.state.placeholderImg" alt=""></em>
                 <i><SvgIcon class="icon-style" iconName="sort" /></i>
               </li>
-              <!-- <li>
-                <span>面条</span>
-                <em><img :src="$store.state.placeholderImg" alt=""></em>
-                <i><SvgIcon class="icon-style" iconName="sort" /></i>
-              </li> -->
             </ul>
           </div>
-          <div class="sc-small pa" id="scrollWrapSmall">
+          <div class="sc-small pa" id="scrollWrapSmall" ref="scrollWrapSmall">
             <div class="scm_wrap">
-              <dl v-for="(item, index) in menuList" :key="index">
+              <dl v-for="(item, index) in menuList" :key="index" class="goodsItemHook">
                 <dt>
                   <p><i>{{item.name}}</i><em>{{item.description}}</em></p>
                   <dfn>···</dfn>
@@ -64,131 +59,76 @@
                           <span><i>¥</i><em>{{it.is_multi ? getMultiPrice(it.multi_spec) : it.single_spec.current_price}}</em></span>
                           <span>
                             <transition name="slide-fade">
-                              <strong v-show="singleNum > 0" @click.stop="reduce('single')">
+                              <strong v-show="getProductNum(it) > 0" @click.stop="reduce(it)">
                                 <SvgIcon class="icon-style" iconName="reduce"/>
                               </strong>
                             </transition>
-                            <b v-show="singleNum > 0">{{singleNum}}</b>
-                            <strong v-if="!it.is_multi" @click.stop="add('single')">
+                            <b v-show="getProductNum(it) > 0">{{getProductNum(it)}}</b>
+                            <strong v-if="!it.is_multi" @click.stop="addSingle(it)">
                               <SvgIcon class="icon-style add" iconName="add"/>
                             </strong>
-                            <dfn v-else @click.stop="add('multi')">选规格</dfn>
+                            <dfn v-else @click.stop="showMultiModal(it)">选规格</dfn>
                           </span>
                         </p>
                       </div>
                     </router-link>
-                    <!-- 多规格demo -->
-                    <!-- <router-link to="/shop/foodDetail" tag="li">
-                      <b><SvgIcon class="icon-style" iconName="new" /></b>
-                      <span><img :src="$store.state.placeholderImg" alt=""></span>
-                      <div>
-                        <h3>秘制凉皮<i>新品</i></h3>
-                        <p class="scs-des">食品介绍3</p>
-                        <p class="scs-com">月售966份 好评率53%</p>
-                        <p class="scs-pri">
-                          <span><i>¥</i><em>20</em></span>
-                          <span>
-                            <transition name="slide-fade">
-                              <strong v-show="multiNum > 0" @click.stop="reduce('multi')">
-                                <SvgIcon class="icon-style" iconName="reduce"/>
-                              </strong>
-                            </transition>
-                            <b v-show="multiNum > 0">{{multiNum}}</b>
-                            <dfn @click.stop="add('multi')">选规格</dfn>
-                          </span>
-                        </p>
-                      </div>
-                    </router-link> -->
                   </ul>
                 </dd>
               </dl>
             </div>
           </div>
           <div class="sc-cart pa">
-            <BuyCart :showShadow.sync="showShadow" ref="buyCart"/>
+            <BuyCart :showShadow.sync="showShadow" ref="buyCart" :manifest="manifest" :float_delivery_fee="shopInfo.float_delivery_fee" :float_minimum_order_amount="shopInfo.float_minimum_order_amount" @reduceManifest="reduceManifest" @addManifest="addManifest" @cleanManifest="cleanManifest"/>
           </div>
         </div>
 
         <div class="sc-comment" v-else key="sc-comment">
-          <div class="scc-digest">
-            <div class="sccd-left">
-              <h3>5</h3>
-              <h5>综合评价</h5>
-              <p>高于周边商家76.9%</p>
-            </div>
-            <div class="sccd-right">
-              <p><span>服务态度</span><i><Rate value="4.5" size='10px'></Rate></i><em>4.7</em></p>
-              <p><span>菜品评价</span><i><Rate value="4.5" size='10px'></Rate></i><em>4.9</em></p>
-              <p><span>送达时间</span><dfn>25分钟</dfn></p>
-            </div>
-          </div>
-
-          <div class="scc-label bf">
-            <span class="active">全部(500)</span>
-            <span>满意(452)</span>
-            <span>不满意(20)</span>
-            <span class="active">有图(102)</span>
-            <span>味道好(499)</span>
-            <span class="active">送货快(475)</span>
-            <span>分量足(299)</span>
-            <span>包装精美(305)</span>
-            <span class="active">干净卫生(109)</span>
-            <span>食材新鲜(500)</span>
-            <span>服务不错(209)</span>
-          </div>
-
-          <ul class="ssc-comment">
-            <li>
-              <div class="sscc-left"><span><img :src="$store.state.placeholderImg" alt=""></span></div>
-              <div class="sscc-right">
-                <p class="r-title"><span>易水寒</span><em>2018-11-29</em></p>
-                <p class="r-rate"><i><Rate value="4.5" size='10px'></Rate></i><em>按时送达</em></p>
-                <div class="r-img">
-                  <img :src="$store.state.placeholderImg" alt="">
-                  <img :src="$store.state.placeholderImg" alt="">
-                  <img :src="$store.state.placeholderImg" alt="">
-                  <img :src="$store.state.placeholderImg" alt="">
-                  <img :src="$store.state.placeholderImg" alt="">
-                </div>
-                <div class="r-tip">
-                  <span>超级至尊比萨-铁盘</span>
-                  <span>韩式浓情风味鸡（标准份）</span>
-                </div>
+          <div class="scc-wrap pa" id="scrollWrapComment">
+            <div class="scc-digest">
+              <div class="sccd-left">
+                <h3>{{scoresObj.overall_score.toFixed(1)}}</h3>
+                <h5>综合评价</h5>
+                <p>高于周边商家{{(scoresObj.compare_rating*100).toFixed(1)}}%</p>
               </div>
-            </li>
-            <li>
-              <div class="sscc-left"><span><img :src="$store.state.placeholderImg" alt=""></span></div>
-              <div class="sscc-right">
-                <p class="r-title"><span>易水寒</span><em>2018-11-29</em></p>
-                <p class="r-rate"><i><Rate value="4.5" size='10px'></Rate></i><em>按时送达</em></p>
-                <div class="r-img">
-                  <img :src="$store.state.placeholderImg" alt="">
-                  <img :src="$store.state.placeholderImg" alt="">
-                  <img :src="$store.state.placeholderImg" alt="">
-                  <img :src="$store.state.placeholderImg" alt="">
-                  <img :src="$store.state.placeholderImg" alt="">
-                </div>
-                <div class="r-tip">
-                  <span>超级至尊比萨-铁盘</span>
-                  <span>韩式浓情风味鸡（标准份）</span>
-                </div>
+              <div class="sccd-right">
+                <p><span>服务态度</span><i><Rate value="4.5" size='10px'></Rate></i><em>{{scoresObj.service_score.toFixed(1)}}</em></p>
+                <p><span>菜品评价</span><i><Rate value="4.5" size='10px'></Rate></i><em>{{scoresObj.food_score.toFixed(1)}}</em></p>
+                <p><span>送达时间</span><dfn>{{scoresObj.deliver_time}}分钟</dfn></p>
               </div>
-            </li>
-          </ul>
+            </div>
+
+            <div class="scc-label bf">
+              <span v-for="(item, index) in tagsList" :key="index" :class="[selectTagList.indexOf(item._id) > -1 ? 'active' : '']" @click="selectTag(item)">{{item.name}}({{item.count}})</span>
+            </div>
+
+            <ul class="ssc-comment">
+              <li v-for="(item, index) in ratingsList" :key="index">
+                <div class="sscc-left"><span><img :src="$store.state.placeholderImg" alt=""></span></div>
+                <div class="sscc-right">
+                  <p class="r-title"><span>{{item.username}}</span><em>{{item.rated_at}}</em></p>
+                  <p class="r-rate"><i><Rate :value="item.rating_star" size='10px'></Rate></i><em>{{item.time_spent_desc}}</em></p>
+                  <div class="r-img">
+                    <img :src="$store.state.placeholderImg" alt="" v-for="it in Math.floor(Math.random() * 10)" :key="it">
+                  </div>
+                  <div class="r-tip">
+                    <span v-for="(it, id) in item.item_ratings" :key="id">{{it.food_name}}</span>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
         </div>
       </transition>
     </div>
-    <Dialog :show="showDialog" @click.native="showDialog=false"/>
+    <Dialog :show="multiSku.length" @click.native="multiSku = []"/>
     <!-- 多规格弹窗 -->
-    <div class="s-multi pa bf" v-show="showDialog">
-      <h3><span class="f16 fwb">名称：</span><b class="f16 fwb">魏家凉皮</b></h3>
-      <h3><span class="f16 fwb">价格：</span><b class="f16 fwb">¥199</b></h3>
+    <div class="s-multi pa bf" v-show="multiSku.length">
+      <h3><span class="f16 fwb">名称：</span><b class="f16 fwb">{{multiFood.name}}</b></h3>
+      <h3><span class="f16 fwb">价格：</span><b class="f16 fwb">¥{{selectMultiFood.current_price}}</b></h3>
       <ul class="oh">
-        <li class="active">大</li>
-        <li>中</li>
-        <li>小</li>
+        <li v-for="(item, index) in multiSku" :key="index" :class="[selectMultiFood.item_id === item.item_id ?'active' : '']" @click="selectMulti(item)">{{item.label}}</li>
       </ul>
-      <p><span @click="showDialog=false">取消</span><span class="active">确定</span></p>
+      <p><span @click="multiSku = []">取消</span><span class="active" @click="addMulti">确定</span></p>
     </div>
     <transition name="router-slid" mode="out-in">
         <router-view></router-view>
@@ -199,7 +139,8 @@
 <script>
 import BScroll from 'better-scroll'
 import { Toast } from 'mint-ui'
-import Va from '@lib/js/validator'
+import Util from '@lib/js/util'
+// import Va from '@lib/js/validator'
 import Api from '@src/service/api'
 import Res from '@src/service/res'
 import Rate from 'vue-tiny-rate'
@@ -208,18 +149,30 @@ import BuyCart from '@src/components/buyCart'
 export default {
   data () {
     return {
+      durationText: '10分钟', // 用时
       showShadow: false, // 购物车遮罩
       showProduct: true, // 是否显示商品
-      singleNum: 0, // 单规格商品
-      multiNum: 0, // 多规格商品
       shopId: 0, // 商铺id
       shopInfo: {}, // 商铺信息
       menuList: [], // 分类列表
-      showDialog: true // 普通遮罩
+      multiFood: {}, // 多规格商品名称
+      multiSku: [], // 多规格商品sku
+      selectMultiFood: {}, // 当前选择的多规格商品
+      manifest: [], // 购物车商品列表
+      scrollObjOne: null,
+      scrollObjTwo: null,
+      scrollObjThree: null,
+      scrollY: 0, // 食品列表滚动距离
+      listHeight: [], // 高度列表
+      ratingsList: [], // 评论列表
+      scoresObj: {}, // 评分信息
+      tagsList: [], // 标签列表
+      selectTagList: [] // 选中标签列表
     }
   },
   created () {
     this.shopId = this.$route.params.shopid
+    this.durationText = Util.getQueryString(window.location.href, 'ti')
   },
   mounted () {
     this.initData()
@@ -245,29 +198,163 @@ export default {
         }
         return str
       }
+    },
+
+    // 获得商品数量
+    getProductNum (item) {
+      return function (item) {
+        let num = 0
+        this.manifest.forEach(it => {
+          if (item.id === it.food_id) {
+            num += it.quantity
+          }
+        })
+        return num
+      }
+    },
+
+    // 当前激活的menu类
+    currentIndex (index) {
+      return function (index) {
+        for (let i = 0; i < this.listHeight.length; i++) {
+          let height1 = this.listHeight[i]
+          let height2 = this.listHeight[i + 1]
+          if (!height2 || (this.scrollY < height2 && this.scrollY >= height1)) {
+            return i
+          }
+        }
+      }
     }
   },
   methods: {
+    // 选择当前tag
+    selectTag (item) {
+      let index = this.selectTagList.indexOf(item._id)
+      if (index < 0) {
+        this.selectTagList.push(item._id)
+      } else {
+        this.selectTagList.splice(index, 1)
+      }
+    },
+
+    // 滚动到目标品类
+    handleGoodsItem (index) {
+      let goodEle = this.$refs.scrollWrapSmall
+      let foodList = goodEle.getElementsByClassName('goodsItemHook')
+      let el = foodList[index]
+      this.scrollObjTwo.scrollToElement(el, 300)
+    },
+
     // tab切换
     switchTab (tar) {
       this.showProduct = tar === 'product'
     },
+
     // 删减商品
-    reduce (type) {
-      if (type === 'single') {
-        this.singleNum--
-      } else {
-        this.multiNum--
+    reduce (item) {
+      if (item.is_multi) {
+        return Toast('多规格商品请在购物车中删除')
+      }
+      let target = this.getProductByIdFromManifest(item.single_spec.item_id)
+      if (!target) return
+      let index = this.manifest.indexOf(target)
+      target.quantity--
+      if (!target.quantity) {
+        this.manifest.splice(index, 1)
       }
     },
-    // 添加商品
-    add (type) {
-      if (type === 'single') {
-        this.singleNum++
+
+    // 从购物车删除
+    reduceManifest (it) {
+      let target = this.getProductByIdFromManifest(it.item_id)
+      if (!target) return
+      let index = this.manifest.indexOf(target)
+      target.quantity--
+      if (!target.quantity) {
+        this.manifest.splice(index, 1)
+        if (!this.manifest.length) {
+          this.showShadow = false
+        }
+      }
+    },
+
+    // 从购物车清空
+    cleanManifest () {
+      this.manifest = []
+      this.showShadow = false
+    },
+
+    // 从购物车获取获取对应id的商品
+    getProductByIdFromManifest (id) {
+      let target = null
+      try {
+        this.manifest.forEach(item => {
+          if (item.item_id === id) {
+            target = item
+            throw new Error()
+          }
+        })
+      } catch (err) {
+
+      }
+      return target
+    },
+
+    // 添加单规格商品
+    addSingle (item) {
+      let target = this.getProductByIdFromManifest(item.single_spec.item_id)
+      if (!target) {
+        this.manifest.push({
+          food_id: item.id,
+          item_id: item.single_spec.item_id,
+          name: item.name,
+          price: item.single_spec.current_price,
+          quantity: 1,
+          packing_fee: Math.floor(Math.random() * 10)
+        })
       } else {
-        this.multiNum++
+        target.quantity++
       }
       this.$refs.buyCart.addToCart()
+    },
+
+    // 添加多规格商品
+    addMulti () {
+      let target = this.getProductByIdFromManifest(this.selectMultiFood.item_id)
+      if (!target) {
+        this.manifest.push({
+          food_id: this.multiFood.id,
+          item_id: this.selectMultiFood.item_id,
+          name: this.multiFood.name,
+          price: this.selectMultiFood.current_price,
+          quantity: 1,
+          packing_fee: Math.floor(Math.random() * 10),
+          label: this.selectMultiFood.label
+        })
+      } else {
+        target.quantity++
+      }
+      this.$refs.buyCart.addToCart()
+      this.multiSku = []
+    },
+
+    // 从购物车添加
+    addManifest (it) {
+      let target = this.getProductByIdFromManifest(it.item_id)
+      if (!target) return
+      target.quantity++
+    },
+
+    // 显示多规格商品sku面板
+    showMultiModal (item) {
+      this.multiFood = item
+      this.multiSku = item.multi_spec
+      this.selectMultiFood = item.multi_spec[0]
+    },
+
+    // 选择多规格食品
+    selectMulti (item) {
+      this.selectMultiFood = item
     },
 
     async initData () {
@@ -281,23 +368,75 @@ export default {
         Res(menuList, data => {
           this.menuList = data
           this.$nextTick(() => {
-            /* eslint-disable no-new */
-            new BScroll('#scrollWrapLarge', {
-              deceleration: 0.001,
-              bounce: true,
-              swipeTime: 1800,
-              click: true
-            })
-            new BScroll('#scrollWrapSmall', {
-              deceleration: 0.001,
-              bounce: true,
-              swipeTime: 1800,
-              click: true
-            })
+            if (!this.scrollObjOne && !this.scrollObjTwo) {
+              /* eslint-disable no-new */
+              this.scrollObjOne = new BScroll('#scrollWrapLarge', {
+                deceleration: 0.001,
+                bounce: true,
+                swipeTime: 1800,
+                click: true
+              })
+              this.scrollObjTwo = new BScroll('#scrollWrapSmall', {
+                deceleration: 0.001,
+                bounce: true,
+                swipeTime: 1800,
+                click: true,
+                probeType: 3
+              })
+              this.scrollObjTwo.on('scroll', pos => {
+                this.scrollY = Math.abs(Math.round(pos.y))
+              })
+              this.getGoodsHeight()
+            } else {
+              this.scrollObjOne.refresh()
+              this.scrollObjTwo.refresh()
+            }
           })
         })
+
+        let ratingsList = await Api.getRatings(this.shopId)
+        Res(ratingsList, data => {
+          this.ratingsList = data
+        })
+
+        let scoresObj = await Api.getScores(this.shopId)
+        Res(scoresObj, data => {
+          this.scoresObj = data
+        })
+
+        let tagsList = await Api.getTags(this.shopId)
+        Res(tagsList, data => {
+          this.tagsList = data
+        })
+
+        // this.$nextTick(() => {
+        //   if (!this.scrollObjThree) {
+        //     /* eslint-disable no-new */
+        //     this.scrollObjThree = new BScroll('#scrollWrapComment', {
+        //       deceleration: 0.001,
+        //       bounce: true,
+        //       swipeTime: 1800,
+        //       click: true
+        //     })
+        //   } else {
+        //     this.scrollObjThree.refresh()
+        //   }
+        // })
       } catch (err) {
         Toast(err.message || '获取商铺详情失败')
+      }
+    },
+
+    // 获取并计算高度
+    getGoodsHeight () {
+      let goodEle = this.$refs.scrollWrapSmall
+      let height = 0
+      this.listHeight.push(height)
+      let foodList = goodEle.getElementsByClassName('goodsItemHook')
+      for (let i = 0; i < foodList.length; i++) {
+        let item = foodList[i]
+        height += item.clientHeight
+        this.listHeight.push(height)
       }
     }
 
@@ -411,11 +550,12 @@ export default {
     /* 商品 */
     .sc-product{
       .sc-large{
+        .bg(#f0f0f0);
         top: 0;
         bottom: 0;
         left: 0;
         width: 0.9rem;
-        overflow: auto;
+        overflow: hidden;
         ul{
           overflow: hidden;
           li{
@@ -464,7 +604,7 @@ export default {
         bottom: 0;
         left: 0.9rem;
         right: 0;
-        overflow: auto;
+        overflow: hidden;
         padding-bottom: 1rem;
         .scm_wrap{
           padding-bottom: 0.5rem;
@@ -578,47 +718,54 @@ export default {
 
     /* 评价 */
     .sc-comment{
-      /* 概览 */
-      .scc-digest{
-        .flex;
-        .bg(#fff);
-        .border(solid, #ccc, 0, 0, 1px, 0);
-        justify-content: space-between;
-        height: 1.15rem;
-        .sccd-left{
-          width: 1.6rem;
-          text-align: center;
-          h3{
-            font-size: 0.3rem;
-            color: red;
-          }
-          h5{
-            font-size: 0.16rem;
-          }
-          p{
-            font-size: 0.12rem;
-            color: #666;
-          }
-        }
-        .sccd-right{
-          flex-grow: 1;
-          p{
-            span{
-              justify-content: flex-start;
-              color: #666;
-              margin-right: 0.05rem;
+      .scc-wrap{
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        overflow: auto;
+        /* 概览 */
+        .scc-digest{
+          .flex;
+          .bg(#fff);
+          .border(solid, #ccc, 0, 0, 1px, 0);
+          justify-content: space-between;
+          height: 1.15rem;
+          .sccd-left{
+            width: 1.6rem;
+            text-align: center;
+            h3{
+              font-size: 0.3rem;
+              color: red;
             }
-            i{
-              .disib;
-              transform: scale(0.8);
+            h5{
+              font-size: 0.16rem;
             }
-            em{
-              color: @c-redyellow;
-            }
-            dfn{
-              margin-left: 0.08rem;
-              color: #999;
+            p{
               font-size: 0.12rem;
+              color: #666;
+            }
+          }
+          .sccd-right{
+            flex-grow: 1;
+            p{
+              span{
+                justify-content: flex-start;
+                color: #666;
+                margin-right: 0.05rem;
+              }
+              i{
+                .disib;
+                transform: scale(0.8);
+              }
+              em{
+                color: @c-redyellow;
+              }
+              dfn{
+                margin-left: 0.08rem;
+                color: #999;
+                font-size: 0.12rem;
+              }
             }
           }
         }
@@ -748,6 +895,7 @@ export default {
         width: auto;
         min-width: 0.5rem;
         margin-right: 0.1rem;
+        margin-bottom: 0.1rem;
       }
       li.active{
         .bg(@c-blue);

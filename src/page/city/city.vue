@@ -62,7 +62,8 @@ export default {
       searchPlace: '', // 搜索关键词
       placeHistory: [], // 历史搜索记录
       placeSearch: [], // 当前关键词搜索结果
-      showHistory: true // 是否显示历史搜索记录
+      showHistory: true, // 是否显示历史搜索记录
+      scrollObj: null // better-scroll
     }
   },
   created () {
@@ -94,12 +95,16 @@ export default {
       }
       this.$nextTick(() => {
         /* eslint-disable no-new */
-        new BScroll('#scrollWrap', {
-          deceleration: 0.001,
-          bounce: true,
-          swipeTime: 1800,
-          click: true
-        })
+        if (!this.scrollObj) {
+          this.scrollObj = new BScroll('#scrollWrap', {
+            deceleration: 0.001,
+            bounce: true,
+            swipeTime: 1800,
+            click: true
+          })
+        } else {
+          this.scrollObj.refresh()
+        }
       })
 
       // 获取城市信息
@@ -126,12 +131,16 @@ export default {
         })
         this.$nextTick(() => {
           /* eslint-disable no-new */
-          new BScroll('#scrollWrap', {
-            deceleration: 0.001,
-            bounce: true,
-            swipeTime: 1800,
-            click: true
-          })
+          if (!this.scrollObj) {
+            this.scrollObj = new BScroll('#scrollWrap', {
+              deceleration: 0.001,
+              bounce: true,
+              swipeTime: 1800,
+              click: true
+            })
+          } else {
+            this.scrollObj.refresh()
+          }
         })
       } catch (err) {
         Toast(err.message || '搜索失败')

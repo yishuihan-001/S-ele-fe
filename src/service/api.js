@@ -83,6 +83,21 @@ Api.shopList = data => fetch('/shopping/shop/getList', data, 'post')
 Api.menuList = data => fetch('/shopping/menu/getMenu/' + data)
 
 /**
+ * 获取评价信息
+ */
+Api.getRatings = data => fetch('/shopping/rate/getRatings/' + data)
+
+/**
+ * 获取评价分数
+ */
+Api.getScores = data => fetch('/shopping/rate/getScores/' + data)
+
+/**
+ * 获取评价标签
+ */
+Api.getTags = data => fetch('/shopping/rate/getTags/' + data)
+
+/**
  * 其他
  */
 /**

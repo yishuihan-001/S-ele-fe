@@ -30,7 +30,7 @@
             <i class="flex"><SvgIcon class="icon-style" iconName="shop" /></i>
             <span class="c6">附近商家</span>
           </h3>
-          <ShopList :shopList="shopList"/>
+          <ShopList :shopList="shopList" :lat="latitude" :lng="longitude"/>
           <div class="mm-loading flex" v-if="isPullUpLoad">
             <i class="flex"><SvgIcon class="icon-style" iconName="loading" /></i>
             <span>...正在加载...</span>
@@ -142,16 +142,20 @@ export default {
         })
 
         this.$nextTick(() => {
-          /* eslint-disable no-new */
-          this.scrollObj = new BScroll('#scrollWrap', {
-            deceleration: 0.001,
-            bounce: true,
-            swipeTime: 1800,
-            click: true,
-            pullUpLoad: {
-              threshold: -80
-            }
-          })
+          if (!this.scrollObj) {
+            /* eslint-disable no-new */
+            this.scrollObj = new BScroll('#scrollWrap', {
+              deceleration: 0.001,
+              bounce: true,
+              swipeTime: 1800,
+              click: true,
+              pullUpLoad: {
+                threshold: -80
+              }
+            })
+          } else {
+            this.scrollObj.refresh()
+          }
           this.pullUpLoad()
         })
       } catch (err) {
