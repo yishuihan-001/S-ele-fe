@@ -7,7 +7,8 @@
       </div>
       <div :class="['bd-topay', float_minimum_order_amount - totalPrice > 0 ? '' : 'active']">
         <em v-if="float_minimum_order_amount - totalPrice > 0">还差{{float_minimum_order_amount - totalPrice}}起送</em>
-        <router-link v-else tag="span" to="/confirmOrder">去结算</router-link>
+        <!-- <router-link v-else tag="span" to="/confirmOrder">去结算</router-link> -->
+        <span v-else @click="createAccount">去结算</span>
       </div>
       <div :class="['bd-cart', 'pa', bounce ? 'bounce' : '', manifest.length ? 'active' : '']" @click="showList">
         <i><SvgIcon class="icon-style" iconName="cart"/></i>
@@ -41,6 +42,9 @@
 <script>
 import { Toast } from 'mint-ui'
 import BScroll from 'better-scroll'
+import Api from '@src/service/api'
+import Res from '@src/service/res'
+
 export default {
   data () {
     return {
@@ -55,7 +59,7 @@ export default {
   mounted () {
 
   },
-  props: ['showShadow', 'manifest', 'float_delivery_fee', 'float_minimum_order_amount'],
+  props: ['showShadow', 'manifest', 'float_delivery_fee', 'float_minimum_order_amount', 'shopId'],
   components: {
 
   },
@@ -115,6 +119,23 @@ export default {
     // 从购物车清空
     cleanManifest () {
       this.$emit('cleanManifest')
+    },
+
+    // 创建结算信息
+    async createAccount () {
+      let account = {
+        restaurant_id: this.shopId,
+        deliver_fee: this.float_delivery_fee,
+        manifest: this.manifest
+      }
+      try {
+        let accountId = await Api.accountCreate(account)
+        Res(accountId, data => {
+          this.$router.push('/confirmOrder?id=' + data)
+        })
+      } catch (err) {
+        Toast(err.message || '结算信息创建失败')
+      }
     }
   },
   watch: {
@@ -124,6 +145,14 @@ export default {
     manifest: {
       handler (newValue, oldValue) {
         this.manifest = newValue
+        this.resetData()
+      },
+      immediate: true,
+      deep: true
+    },
+
+    showShadow: {
+      handler () {
         this.resetData()
       },
       immediate: true,

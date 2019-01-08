@@ -9,7 +9,7 @@ Vue.use(Router)
 /* A */ const msite = r => require.ensure([], () => r(require('../page/msite/msite')), 'msite')
 /* A */ const food = r => require.ensure([], () => r(require('../page/food/food')), 'food')
 const search = r => require.ensure([], () => r(require('../page/search/search')), 'search')
-const shop = r => require.ensure([], () => r(require('../page/shop/shop')), 'shop')
+/* A */ const shop = r => require.ensure([], () => r(require('../page/shop/shop')), 'shop')
 const foodDetail = r => require.ensure([], () => r(require('../page/shop/children/foodDetail')), 'foodDetail')
 const shopDetail = r => require.ensure([], () => r(require('../page/shop/children/shopDetail')), 'shopDetail')
 const shopSafe = r => require.ensure([], () => r(require('../page/shop/children/children/shopSafe')), 'shopSafe')
@@ -85,11 +85,11 @@ const routes = [
   },
   // 商铺页
   {
-    path: '/shop/:shopid',
+    path: '/shop',
     component: shop,
     children: [
       {
-        path: 'foodDetail', // 食品详情页
+        path: 'foodDetail/:id', // 食品详情页
         component: foodDetail
       },
       {

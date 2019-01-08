@@ -14,8 +14,11 @@
 </template>
 
 <script>
+import { Toast } from 'mint-ui'
 import Rate from 'vue-tiny-rate'
-import Header from '../../../components/header'
+import Api from '@src/service/api'
+import Res from '@src/service/res'
+import Header from '@src/components/header'
 
 export default {
   data () {
@@ -27,7 +30,7 @@ export default {
 
   },
   mounted () {
-
+    this.initData()
   },
   components: {
     Header,
@@ -37,7 +40,13 @@ export default {
 
   },
   methods: {
-
+    async initData () {
+      // try {
+      //   let foodInfo = await Api.
+      // } catch (err) {
+      //   Toast(err.message || '商品详情获取失败')
+      // }
+    }
   },
   watch: {
 

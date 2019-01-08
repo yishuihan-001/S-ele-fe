@@ -98,6 +98,14 @@ Api.getScores = data => fetch('/shopping/rate/getScores/' + data)
 Api.getTags = data => fetch('/shopping/rate/getTags/' + data)
 
 /**
+ * 订单
+ */
+/**
+ * 创建结算信息
+ */
+Api.accountCreate = data => fetch('/order/account/create', data, 'post')
+
+/**
  * 其他
  */
 /**

@@ -1,8 +1,5 @@
 <template>
   <div class="container shop">
-    <transition name="scon-fade">
-      <div class="s-shadow pa" v-show="showShadow" @click="showShadow = false"></div>
-    </transition>
     <div class="s-header pr">
       <div class="sh-back pa" @click="$router.back()"><SvgIcon class="icon-style" iconName="arrow-left"/></div>
       <router-link tag="div" to="/shop/shopDetail" class="sh-shopDetail flex">
@@ -17,9 +14,9 @@
         </div>
         <i><SvgIcon class="icon-style" iconName="arrow-right-white" /></i>
       </router-link>
-      <div class="sh-activity flex">
-        <p><dfn>减</dfn>满30减5，满60减8（APP专享）</p>
-        <span><em>1个活动</em><i><SvgIcon class="icon-style" iconName="arrow-right-white" /></i></span>
+      <div class="sh-activity flex" v-if="shopInfo.activities && shopInfo.activities.length">
+        <p><dfn>{{shopInfo.activities[0].keyword}}</dfn>{{shopInfo.activities[0].description}}</p>
+        <span v-if="shopInfo.activities.length > 1" @click="showActivity = true"><em>{{shopInfo.activities.length}}个活动</em><i><SvgIcon class="icon-style" iconName="arrow-right-white" /></i></span>
       </div>
     </div>
 
@@ -28,8 +25,8 @@
     </div>
 
     <div class="s-con pr">
-      <transition name="scon-fade" mode="out-in">
-        <div class="sc-product bf" v-if="showProduct" key="sc-product">
+      <!-- <transition name="scon-fade" mode="out-in"> -->
+        <div :class="['sc-product', showProduct ? 'showProduct' : '']">
           <div class="sc-large pa" id="scrollWrapLarge" ref="scrollWrapLarge">
             <ul>
               <li v-for="(item, index) in menuList" :key="index" :class="{active: index === currentIndex(index)}" @click="handleGoodsItem(index)">
@@ -46,7 +43,7 @@
                   <p><i>{{item.name}}</i><em>{{item.description}}</em></p>
                   <dfn>···</dfn>
                 </dt>
-                <dd>
+                <dd class="bf">
                   <ul>
                     <router-link v-for="(it, id) in item.foods" :key="id" to="/shop/foodDetail" tag="li">
                       <b><SvgIcon class="icon-style" iconName="new" /></b>
@@ -77,50 +74,63 @@
               </dl>
             </div>
           </div>
-          <div class="sc-cart pa">
+          <!-- <div class="sc-cart pa">
             <BuyCart :showShadow.sync="showShadow" ref="buyCart" :manifest="manifest" :float_delivery_fee="shopInfo.float_delivery_fee" :float_minimum_order_amount="shopInfo.float_minimum_order_amount" @reduceManifest="reduceManifest" @addManifest="addManifest" @cleanManifest="cleanManifest"/>
-          </div>
+          </div> -->
         </div>
 
-        <div class="sc-comment" v-else key="sc-comment">
+        <div :class="['sc-comment', showProduct ? 'showProduct' : '']">
           <div class="scc-wrap pa" id="scrollWrapComment">
-            <div class="scc-digest">
-              <div class="sccd-left">
-                <h3>{{scoresObj.overall_score.toFixed(1)}}</h3>
-                <h5>综合评价</h5>
-                <p>高于周边商家{{(scoresObj.compare_rating*100).toFixed(1)}}%</p>
-              </div>
-              <div class="sccd-right">
-                <p><span>服务态度</span><i><Rate value="4.5" size='10px'></Rate></i><em>{{scoresObj.service_score.toFixed(1)}}</em></p>
-                <p><span>菜品评价</span><i><Rate value="4.5" size='10px'></Rate></i><em>{{scoresObj.food_score.toFixed(1)}}</em></p>
-                <p><span>送达时间</span><dfn>{{scoresObj.deliver_time}}分钟</dfn></p>
-              </div>
-            </div>
-
-            <div class="scc-label bf">
-              <span v-for="(item, index) in tagsList" :key="index" :class="[selectTagList.indexOf(item._id) > -1 ? 'active' : '']" @click="selectTag(item)">{{item.name}}({{item.count}})</span>
-            </div>
-
-            <ul class="ssc-comment">
-              <li v-for="(item, index) in ratingsList" :key="index">
-                <div class="sscc-left"><span><img :src="$store.state.placeholderImg" alt=""></span></div>
-                <div class="sscc-right">
-                  <p class="r-title"><span>{{item.username}}</span><em>{{item.rated_at}}</em></p>
-                  <p class="r-rate"><i><Rate :value="item.rating_star" size='10px'></Rate></i><em>{{item.time_spent_desc}}</em></p>
-                  <div class="r-img">
-                    <img :src="$store.state.placeholderImg" alt="" v-for="it in Math.floor(Math.random() * 10)" :key="it">
-                  </div>
-                  <div class="r-tip">
-                    <span v-for="(it, id) in item.item_ratings" :key="id">{{it.food_name}}</span>
-                  </div>
+            <div class="scc-wrap-con">
+              <div class="scc-digest" v-if="scoresObj">
+                <div class="sccd-left">
+                  <h3>{{scoresObj.overall_score.toFixed(1)}}</h3>
+                  <h5>综合评价</h5>
+                  <p>高于周边商家{{(scoresObj.compare_rating*100).toFixed(1)}}%</p>
                 </div>
-              </li>
-            </ul>
+                <div class="sccd-right">
+                  <p><span>服务态度</span><i><Rate value="4.5" size='10px'></Rate></i><em>{{scoresObj.service_score.toFixed(1)}}</em></p>
+                  <p><span>菜品评价</span><i><Rate value="4.5" size='10px'></Rate></i><em>{{scoresObj.food_score.toFixed(1)}}</em></p>
+                  <p><span>送达时间</span><dfn>{{scoresObj.deliver_time}}分钟</dfn></p>
+                </div>
+              </div>
+
+              <div class="scc-label bf">
+                <span v-for="(item, index) in tagsList" :key="index" :class="[selectTagList.indexOf(item._id) > -1 ? 'active' : '']" @click="selectTag(item)">{{item.name}}({{item.count}})</span>
+              </div>
+
+              <ul class="ssc-comment">
+                <li v-for="(item, index) in ratingsList" :key="index">
+                  <div class="sscc-left"><span><img :src="$store.state.placeholderImg" alt=""></span></div>
+                  <div class="sscc-right">
+                    <p class="r-title"><span>{{item.username}}</span><em>{{item.rated_at}}</em></p>
+                    <p class="r-rate"><i><Rate :value="item.rating_star" size='10px'></Rate></i><em>{{item.time_spent_desc}}</em></p>
+                    <div class="r-img">
+                      <img :src="$store.state.placeholderImg" alt="" v-for="it in Math.floor(Math.random() * 10)" :key="it">
+                    </div>
+                    <div class="r-tip">
+                      <span v-for="(it, id) in item.item_ratings" :key="id">{{it.food_name}}</span>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
-      </transition>
+      <!-- </transition> -->
     </div>
-    <Dialog :show="multiSku.length" @click.native="multiSku = []"/>
+
+    <!-- 购物车遮罩 -->
+    <transition name="scon-fade">
+      <div class="s-shadow pa" v-show="showShadow" @click="showShadow = false"></div>
+    </transition>
+    <!-- 购物车 -->
+    <div class="sc-cart pa" v-if="showProduct">
+      <BuyCart :showShadow.sync="showShadow" ref="buyCart" :manifest="manifest" :float_delivery_fee="shopInfo.float_delivery_fee" :float_minimum_order_amount="shopInfo.float_minimum_order_amount" @reduceManifest="reduceManifest" @addManifest="addManifest" @cleanManifest="cleanManifest" :shopId="shopId"/>
+    </div>
+
+    <!-- 多规格弹窗遮罩 -->
+    <Dialog :show="multiSku.length" @click.native="multiSku = []" style="z-index: 9;"/>
     <!-- 多规格弹窗 -->
     <div class="s-multi pa bf" v-show="multiSku.length">
       <h3><span class="f16 fwb">名称：</span><b class="f16 fwb">{{multiFood.name}}</b></h3>
@@ -130,6 +140,21 @@
       </ul>
       <p><span @click="multiSku = []">取消</span><span class="active" @click="addMulti">确定</span></p>
     </div>
+
+    <!-- 商铺活动遮罩 -->
+    <transition name="scon-fade">
+      <div class="s-shadowActivity pa" v-show="showActivity" @click="showActivity = false"></div>
+    </transition>
+    <!-- 商铺活动 -->
+    <div class="s-activity pa" v-if="showActivity">
+      <ul class="oh" v-if="shopInfo.activities && shopInfo.activities.length > 1">
+        <li v-for="(item, index) in shopInfo.activities" :key="index">
+          <h3><span class="f18 fwb">{{index + 1}}.</span><em class="f18 fwb">{{item.keyword}}</em></h3>
+          <p class="f18">{{item.description}}</p>
+        </li>
+      </ul>
+    </div>
+
     <transition name="router-slid" mode="out-in">
         <router-view></router-view>
     </transition>
@@ -151,6 +176,7 @@ export default {
     return {
       durationText: '10分钟', // 用时
       showShadow: false, // 购物车遮罩
+      showActivity: false, // 商铺活动遮罩
       showProduct: true, // 是否显示商品
       shopId: 0, // 商铺id
       shopInfo: {}, // 商铺信息
@@ -165,13 +191,13 @@ export default {
       scrollY: 0, // 食品列表滚动距离
       listHeight: [], // 高度列表
       ratingsList: [], // 评论列表
-      scoresObj: {}, // 评分信息
+      scoresObj: null, // 评分信息
       tagsList: [], // 标签列表
       selectTagList: [] // 选中标签列表
     }
   },
   created () {
-    this.shopId = this.$route.params.shopid
+    this.shopId = Util.getQueryString(window.location.href, 'id')
     this.durationText = Util.getQueryString(window.location.href, 'ti')
   },
   mounted () {
@@ -394,34 +420,36 @@ export default {
           })
         })
 
-        let ratingsList = await Api.getRatings(this.shopId)
+        let rateScoreTag = await Promise.all([await Api.getRatings(this.shopId), await Api.getScores(this.shopId), await Api.getTags(this.shopId)])
+
+        let ratingsList = rateScoreTag[0]
         Res(ratingsList, data => {
           this.ratingsList = data
         })
 
-        let scoresObj = await Api.getScores(this.shopId)
+        let scoresObj = rateScoreTag[1]
         Res(scoresObj, data => {
           this.scoresObj = data
         })
 
-        let tagsList = await Api.getTags(this.shopId)
+        let tagsList = rateScoreTag[2]
         Res(tagsList, data => {
           this.tagsList = data
         })
 
-        // this.$nextTick(() => {
-        //   if (!this.scrollObjThree) {
-        //     /* eslint-disable no-new */
-        //     this.scrollObjThree = new BScroll('#scrollWrapComment', {
-        //       deceleration: 0.001,
-        //       bounce: true,
-        //       swipeTime: 1800,
-        //       click: true
-        //     })
-        //   } else {
-        //     this.scrollObjThree.refresh()
-        //   }
-        // })
+        this.$nextTick(() => {
+          if (!this.scrollObjThree) {
+            /* eslint-disable no-new */
+            this.scrollObjThree = new BScroll('#scrollWrapComment', {
+              deceleration: 0.001,
+              bounce: true,
+              swipeTime: 1800,
+              click: true
+            })
+          } else {
+            this.scrollObjThree.refresh()
+          }
+        })
       } catch (err) {
         Toast(err.message || '获取商铺详情失败')
       }
@@ -537,18 +565,23 @@ export default {
 
   /* 容器 */
   .s-con{
-    .bg(#f1f1f1);
     flex-grow: 1;
     & > div{
+      .bg(#f1f1f1);
       position: absolute;
       top: 0;
       bottom: 0;
       left: 0;
       right: 0;
-      overflow: auto;
+      overflow: hidden;
     }
     /* 商品 */
+    .sc-product.showProduct{
+      z-index: 6
+    }
     .sc-product{
+      .bg(#f0f0f0);
+      z-index: 3;
       .sc-large{
         .bg(#f0f0f0);
         top: 0;
@@ -627,7 +660,6 @@ export default {
             }
           }
           li{
-            .bg(#fff);
             .flex;
             .border(solid, #ccc, 0, 0, 1px, 0);
             justify-content: space-between;
@@ -717,54 +749,61 @@ export default {
     }
 
     /* 评价 */
+    .sc-comment.showProduct{
+      z-index: 3;
+    }
     .sc-comment{
+      z-index: 6;
       .scc-wrap{
         top: 0;
         bottom: 0;
         left: 0;
         right: 0;
         overflow: auto;
-        /* 概览 */
-        .scc-digest{
-          .flex;
+        .scc-wrap-con{
           .bg(#fff);
-          .border(solid, #ccc, 0, 0, 1px, 0);
-          justify-content: space-between;
-          height: 1.15rem;
-          .sccd-left{
-            width: 1.6rem;
-            text-align: center;
-            h3{
-              font-size: 0.3rem;
-              color: red;
-            }
-            h5{
-              font-size: 0.16rem;
-            }
-            p{
-              font-size: 0.12rem;
-              color: #666;
-            }
-          }
-          .sccd-right{
-            flex-grow: 1;
-            p{
-              span{
-                justify-content: flex-start;
-                color: #666;
-                margin-right: 0.05rem;
+          /* 概览 */
+          .scc-digest{
+            .flex;
+            .bg(#fff);
+            .border(solid, #ccc, 0, 0, 1px, 0);
+            justify-content: space-between;
+            height: 1.15rem;
+            .sccd-left{
+              width: 1.6rem;
+              text-align: center;
+              h3{
+                font-size: 0.3rem;
+                color: red;
               }
-              i{
-                .disib;
-                transform: scale(0.8);
+              h5{
+                font-size: 0.16rem;
               }
-              em{
-                color: @c-redyellow;
-              }
-              dfn{
-                margin-left: 0.08rem;
-                color: #999;
+              p{
                 font-size: 0.12rem;
+                color: #666;
+              }
+            }
+            .sccd-right{
+              flex-grow: 1;
+              p{
+                span{
+                  justify-content: flex-start;
+                  color: #666;
+                  margin-right: 0.05rem;
+                }
+                i{
+                  .disib;
+                  transform: scale(0.8);
+                }
+                em{
+                  color: @c-redyellow;
+                }
+                dfn{
+                  margin-left: 0.08rem;
+                  color: #999;
+                  font-size: 0.12rem;
+                }
               }
             }
           }
@@ -794,6 +833,8 @@ export default {
       /* 评论 */
       .ssc-comment{
         .bg(#fff);
+        overflow: hidden;
+        height: auto;
         padding: 0 0.1rem;
         li{
           padding-top: 0.1rem;
@@ -880,6 +921,7 @@ export default {
     margin-left: -1.5rem;
     padding: 0.2rem;
     box-sizing: border-box;
+    z-index: 10;
     h3{
       line-height: 0.3rem;
     }
@@ -951,18 +993,49 @@ export default {
     left: 0;
     right: 0;
     height: 0.5rem;
-    z-index: 6;
+    z-index: 8;
   }
 
   /* 遮罩 */
-  .s-shadow{
+  .s-shadow,.s-shadowActivity{
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
     background: #000;
     opacity: 0.3;
-    z-index: 3;
+    z-index: 7;
+  }
+  .s-shadowActivity{
+    z-index: 9;
+  }
+
+  /* 商铺活动 */
+  .s-activity{
+    .bg(#fff);
+    width: 3rem;
+    height: auto;
+    min-height: 2rem;
+    border-radius: 5px;
+    top: 50%;
+    left: 50%;
+    margin-top: -1.5rem;
+    margin-left: -1.5rem;
+    padding: 0.2rem;
+    box-sizing: border-box;
+    z-index: 10;
+    li{
+      margin-bottom: 0.1rem;
+      h3{
+        line-height: 0.3rem;
+        em{
+          color: @c-redyellow;
+        }
+      }
+      p{
+        line-height: 0.3rem;
+      }
+    }
   }
 
 </style>

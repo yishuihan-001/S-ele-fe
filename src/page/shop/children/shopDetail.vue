@@ -72,7 +72,7 @@ export default {
   @import url("../../../../lib/style/util");
 
   .shopDetail {
-    z-index: 9;
+    z-index: 15;
   }
   .main > div{
     .bg(#fff);
