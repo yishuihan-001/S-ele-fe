@@ -8,7 +8,13 @@ const state = {
   placeholderImg: 'http://f0.jmstatic.com/btstatic/h5/index/bg_logo_1_1.jpg',
   userInfo: null, // 用户信息
   currCity: null, // 当前城市
-  cityAddress: null // 具体地址
+  cityAddress: null, // 具体地址
+  remarkIdList: [], // 已选备注id
+  selfRemarks: '', // 自定义备注
+  currentAddress: null, // 当前收货地址
+  receiveAddress: [], // 收货地址列表
+  isVerifyPhone: false, // 是否验证手机号码
+  locationAddress: '' // 添加收货的定位地址
 }
 
 const mutations = {
@@ -22,6 +28,30 @@ const mutations = {
 
   Set_CityAddress (state, address) {
     state.cityAddress = address
+  },
+
+  Set_RemarkIdList (state, list) {
+    state.remarkIdList = list
+  },
+
+  Set_SelfRemarks (state, str) {
+    state.selfRemarks = str
+  },
+
+  Set_CurrentAddress (state, obj) {
+    state.currentAddress = obj
+  },
+
+  Set_ReceiveAddress (state, list) {
+    state.receiveAddress = list
+  },
+
+  Set_IsVerifyPhone (state, boo) {
+    state.isVerifyPhone = boo
+  },
+
+  Set_LocationAddress (state, str) {
+    state.locationAddress = str
   }
 }
 

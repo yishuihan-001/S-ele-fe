@@ -1,7 +1,7 @@
 <template>
   <div class="container confirmOrder">
     <Header title="确认订单" back="true">
-      <router-link slot="right" class="f16 cf c-right" to="/profile" v-if="isLogin">
+      <router-link slot="right" class="f16 cf c-right" to="/profile" v-if="userInfo">
         <i class="flex"><SvgIcon class="icon-style" iconName="user"/></i>
       </router-link>
       <router-link slot="right" class="f16 cf c-right" to="/login" v-else>登录/注册</router-link>
@@ -9,19 +9,19 @@
 
     <div class="main">
       <div class="c-address">
-        <router-link tag="div" to="/confirmOrder/chooseAddress">
+        <div @click="goAddress">
           <div class="ca-left"><SvgIcon class="icon-style" iconName="site" /></div>
-          <div class="ca-right" v-if="true">
-            <h3><span class="f16 fwb">slient</span><em>先生</em><dfn>15000000000</dfn></h3>
-            <p><i>家</i>富力城</p>
+          <div class="ca-right" v-if="!userInfo || !currentAddress">请添加一个收获地址</div>
+          <div class="ca-right" v-else>
+            <h3><span class="f16 fwb">{{currentAddress.name}}</span><em>{{item.male === 'male' ? '先生' : item.male === 'female' ? '女士' : ''}}</em><dfn>{{item.phone}}</dfn></h3>
+            <p><i>{{item.tag}}</i>{{item.address + item.address_detail}}</p>
           </div>
-          <div class="ca-right" v-else>请添加一个收获地址</div>
-        </router-link>
+        </div>
         <span><SvgIcon class="icon-style" iconName="arrow-right" /></span>
       </div>
 
       <div class="c-arriveTime">
-        <span class="f18 fwb c0">送达时间</span>
+        <span class="f18 fwb c0" @click="printData">送达时间</span>
         <div>
           <p>尽快送达 | 预计 18:48</p>
           <p><span>蜂鸟专送</span></p>
@@ -33,22 +33,21 @@
         <p><span>红包</span><dfn><em>暂时只在饿了么 APP 中支持</em></dfn></p>
       </div>
 
-      <div class="c-order bf">
+      <div class="c-order bf" v-if="accountInfo">
         <div class="co-title">
           <i><img :src="$store.state.placeholderImg" alt=""></i>
-          <span class="f18">效果演示</span>
+          <span class="f18">{{accountInfo.restaurant_info.name}}</span>
         </div>
 
         <ul>
-          <li><i>ussss</i><em>X8</em><dfn>¥20</dfn></li>
-          <li><i>ussss</i><em>X8</em><dfn>¥20</dfn></li>
-          <li><i>ussss</i><em>X8</em><dfn>¥20</dfn></li>
-          <li><i>ussss</i><em>X8</em><dfn>¥20</dfn></li>
+          <li v-for="(item, index) in accountInfo.manifest" :key="index"><i>{{item.name + (item.label ? '('+ item.label +')' : '')}}</i><em>X{{item.quantity}}</em><dfn>¥{{item.price}}</dfn></li>
+          <li><i>{{accountInfo.extra.name}}</i><em>X{{accountInfo.extra.quantity}}</em><dfn>¥{{accountInfo.extra.price}}</dfn></li>
+          <li><i>打包费</i><dfn>¥{{getPackingFee(accountInfo.manifest)}}</dfn></li>
         </ul>
-        <p><span>配送费</span><dfn>4</dfn></p>
+        <p><span>配送费</span><dfn>{{accountInfo.deliver_fee}}</dfn></p>
         <div class="co-total">
-          <span class="f18">订单 ¥24298</span>
-          <em class="f18 fwb">待支付 ¥24298</em>
+          <span class="f18">订单 ¥{{accountInfo.total_price.toFixed(2)}}</span>
+          <em class="f18 fwb">待支付 ¥{{accountInfo.total_price.toFixed(2)}}</em>
         </div>
       </div>
 
@@ -60,7 +59,7 @@
     </div>
 
     <div class="c-comfirmPay pf">
-      <span class="f18 cf">待支付 ¥24298</span>
+      <span class="f18 cf" v-if="accountInfo">待支付 ¥{{accountInfo.total_price.toFixed(2)}}</span>
       <router-link class="f18 tac cf" to="/confirmOrder/payment" tag="em">确认下单</router-link>
     </div>
 
@@ -70,11 +69,11 @@
       <div class="c-type pa bf" v-show="showPayType">
         <h3 class="tac f18">支付方式</h3>
         <ul>
-          <li @click="payOnline=false">
+          <li>
             <span class="c6">货到付款（商家不支持货到付款）</span>
             <em><i class="flex"><SvgIcon class="icon-style" :iconName="payOnline ? 'gou-h' : 'gou-l'" /></i></em>
           </li>
-          <li @click="payOnline=true">
+          <li>
             <span>在线支付</span>
             <em><i class="flex"><SvgIcon class="icon-style" :iconName="payOnline ? 'gou-l' : 'gou-h'" /></i></em>
           </li>
@@ -89,30 +88,69 @@
 </template>
 
 <script>
-import Header from '../../components/header'
+import { mapState } from 'vuex'
+import { Toast } from 'mint-ui'
+import Util from '@lib/js/util'
+import Api from '@src/service/api'
+import Res from '@src/service/res'
+import Header from '@src/components/header'
 
 export default {
   data () {
     return {
-      isLogin: false,
-      showPayType: false,
-      payOnline: true
+      showPayType: false, // 选择支付方式
+      payOnline: true, // 在线支付
+      accountId: 0, // 结算id
+      accountInfo: null // 结算信息
     }
   },
   created () {
-
+    this.accountId = Util.getQueryString(window.location.href, 'id')
   },
   mounted () {
-    console.log('page has mounted !')
+    this.initData()
   },
   components: {
     Header
   },
   computed: {
+    ...mapState(['userInfo', 'remarkIdList', 'selfRemarks', 'currentAddress']),
 
+    getPackingFee (arr) {
+      return function (arr) {
+        let packetFee = 0
+        arr.forEach(item => {
+          packetFee += item.packing_fee || 0
+        })
+        return packetFee
+      }
+    }
   },
   methods: {
+    async initData () {
+      try {
+        let info = await Api.accountDetail(this.accountId)
+        Res(info, data => {
+          this.accountInfo = data
+        })
+      } catch (err) {
+        Toast(err.message || '获取结算信息失败')
+      }
+    },
 
+    // 打印数据
+    printData () {
+      console.log(this.remarkIdList)
+      console.log(this.selfRemarks)
+    },
+
+    // 地址列表
+    goAddress () {
+      if (!this.userInfo) {
+        return Toast('您还没有登录哦~')
+      }
+      this.$router.push('/confirmOrder/chooseAddress')
+    }
   },
   watch: {
 
@@ -124,7 +162,9 @@ export default {
   @import url("../../../lib/style/util");
 
   .confirmOrder {
-
+    .main{
+      overflow: auto;
+    }
   }
   .c-right{
     padding-right: 0.1rem;

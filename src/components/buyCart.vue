@@ -48,8 +48,8 @@ import Res from '@src/service/res'
 export default {
   data () {
     return {
-      bounce: false,
-      totalPrice: 0,
+      bounce: false, // 切换购物车弹跳效果
+      totalPrice: 0, // 总金额
       scrollObj: null
     }
   },

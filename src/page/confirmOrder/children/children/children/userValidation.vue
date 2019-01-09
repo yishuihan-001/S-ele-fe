@@ -5,23 +5,28 @@
     <div class="main">
       <p class="p-title bf f18">收不到短信？使用<span>语音验证码</span></p>
       <div class="p-operate flex bf">
-        <input type="text" class="g-input" placeholder="验证码">
-        <span class="g-btn disable">获取验证码</span>
+        <input type="text" class="g-input" placeholder="验证码" v-model="verifycode">
+        <span class="g-btn" @click="sendVerifycode">获取验证码</span>
       </div>
 
       <div class="r-btn bf">
-        <span class="g-btn">确定</span>
+        <span class="g-btn" @click="comfirm">确定</span>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import Header from '../../../../../components/header'
+import { mapMutations } from 'vuex'
+import { Toast } from 'mint-ui'
+import Ju from '@lib/js/judge'
+import Header from '@src/components/header'
 
 export default {
   data () {
     return {
+      verifycode: '',
+      correctcode: ''
     }
   },
   created () {
@@ -37,7 +42,29 @@ export default {
 
   },
   methods: {
+    ...mapMutations(['Set_IsVerifyPhone']),
 
+    // 验证通过
+    comfirm () {
+      if (Ju.isEmpty(this.verifycode)) {
+        return Toast('验证码不能为空')
+      }
+      if (+this.verifycode !== +this.correctcode) {
+        return Toast('您输入的验证码有误')
+      }
+      this.Set_IsVerifyPhone(true)
+      this.$router.back()
+    },
+
+    // 发送验证码
+    sendVerifycode () {
+      let arr = []
+      for (let i = 0; i < 4; i++) {
+        arr.push(Math.floor(Math.random() * 10))
+      }
+      this.correctcode = arr.join('')
+      Toast('验证码：' + this.correctcode)
+    }
   },
   watch: {
 

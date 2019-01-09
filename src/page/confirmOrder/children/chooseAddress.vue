@@ -4,18 +4,11 @@
 
     <div class="main">
       <ul class="c-list pa">
-        <li>
+        <li v-for="(item, index) in addressList" :key="index">
           <div class="ca-left"><SvgIcon class="icon-style" iconName="gou-l" /></div>
           <div class="ca-right">
-            <h3><span class="f16 fwb">slient</span><em>先生</em><dfn>15000000000</dfn></h3>
-            <p><i>家</i>富力城</p>
-          </div>
-        </li>
-        <li>
-          <div class="ca-left"><SvgIcon class="icon-style" iconName="gou-h" /></div>
-          <div class="ca-right">
-            <h3><span class="f16 fwb">slient</span><em>先生</em><dfn>15000000000</dfn></h3>
-            <p><i>家</i>富力城</p>
+            <h3><span class="f16 fwb">{{item.name}}</span><em>{{item.male === 'male' ? '先生' : item.male === 'female' ? '女士' : ''}}</em><dfn>{{item.phone}}</dfn></h3>
+            <p><i>{{item.tag}}</i>{{item.address + item.address_detail}}</p>
           </div>
         </li>
       </ul>
@@ -32,18 +25,23 @@
 </template>
 
 <script>
-import Header from '../../../components/header'
+// import { mapState } from 'vuex'
+import { Toast } from 'mint-ui'
+import Api from '@src/service/api'
+import Res from '@src/service/res'
+import Header from '@src/components/header'
 
 export default {
   data () {
     return {
+      addressList: []
     }
   },
   created () {
 
   },
   mounted () {
-
+    this.initData()
   },
   components: {
     Header
@@ -52,7 +50,16 @@ export default {
 
   },
   methods: {
-
+    async initData () {
+      try {
+        let list = await Api.addressList()
+        Res(list, data => {
+          this.addressList = data
+        })
+      } catch (err) {
+        Toast(err.message || '获取收货地址列表失败')
+      }
+    }
   },
   watch: {
 

@@ -7,7 +7,7 @@
         <div class="sn-tip">
           <div class="snt-left"><img :src="$store.state.placeholderImg" alt=""></div>
           <div class="snt-right">
-            <p>监督检查结果：优秀</p>
+            <p>监督检查结果：{{grade[Math.floor(Math.random() * grade.length)]}}</p>
             <p>检查日期：2018-08-08</p>
           </div>
         </div>
@@ -15,21 +15,21 @@
 
       <div class="s-info">
         <h3><span>工商登记信息</span></h3>
-        <p><span>工商执照注册号</span></p>
-        <p><span>注册资本</span></p>
-        <p><span>注册地址</span></p>
-        <p><span>属地监管所</span></p>
-        <p><span>法定代表人</span></p>
-        <p><span>经营范围</span></p>
+        <p><span>工商执照注册号</span>1</p>
+        <p><span>注册资本</span>2</p>
+        <p><span>注册地址</span>3</p>
+        <p><span>属地监管所</span>4</p>
+        <p><span>法定代表人</span>5</p>
+        <p><span>经营范围</span>6</p>
       </div>
 
       <div class="s-info">
         <h3><span>餐饮许可证</span></h3>
-        <p><span>营业范围</span></p>
-        <p><span>许可证有效期</span></p>
-        <p><span>许可证号</span></p>
-        <p><span>发证时间</span></p>
-        <p><span>发证机关</span></p>
+        <p><span>营业范围</span>7</p>
+        <p><span>许可证有效期</span>8</p>
+        <p><span>许可证号</span>9</p>
+        <p><span>发证时间</span>10</p>
+        <p><span>发证机关</span>11</p>
       </div>
 
       <div class="s-credential">
@@ -52,7 +52,7 @@ import Header from '../../../../components/header'
 export default {
   data () {
     return {
-
+      grade: ['优秀', '良好', '合格', '不合格', '整改中', '已吊销营业执照']
     }
   },
   created () {
@@ -81,6 +81,9 @@ export default {
 
   .shopSafe {
     z-index: 12;
+    .main{
+      overflow: auto;
+    }
   }
   .main > div{
     .bg(#fff);
@@ -128,10 +131,12 @@ export default {
       .flex;
       .hlh(0.5rem);
       .border(solid, #eee, 0, 0, 1px, 0);
-      justify-content: space-between;
+      justify-content: flex-start;
       margin: 0 0.1rem;
       span{
+        .ellipsis;
         color: #666;
+        width: 1.2rem;
       }
       i{
         .flex;
@@ -146,7 +151,6 @@ export default {
       padding: 0 0.1rem;
     }
     div{
-      .bg(#ccc);
       padding: 0.1rem;
       overflow: hidden;
       img{

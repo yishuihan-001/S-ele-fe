@@ -2,7 +2,7 @@
   <div class="container shop">
     <div class="s-header pr">
       <div class="sh-back pa" @click="$router.back()"><SvgIcon class="icon-style" iconName="arrow-left"/></div>
-      <router-link tag="div" to="/shop/shopDetail" class="sh-shopDetail flex">
+      <router-link tag="div" :to="'/shop/shopDetail?id=' + shopId" class="sh-shopDetail flex">
         <div class="shh-info">
           <span><img :src="$store.state.placeholderImg" alt=""></span>
           <div>
@@ -45,7 +45,7 @@
                 </dt>
                 <dd class="bf">
                   <ul>
-                    <router-link v-for="(it, id) in item.foods" :key="id" to="/shop/foodDetail" tag="li">
+                    <router-link v-for="(it, id) in item.foods" :key="id" :to="'/shop/foodDetail/' + it.id" tag="li">
                       <b><SvgIcon class="icon-style" iconName="new" /></b>
                       <span><img :src="$store.state.placeholderImg" alt=""></span>
                       <div>

@@ -4,24 +4,19 @@
 
     <div class="main">
       <div class="s-search bf f18 flex">
-        <input type="text" class="g-input" placeholder="请输入小区/写字楼/学校等">
-        <span class="g-btn">搜索</span>
-      </div
-      >
+        <input type="text" class="g-input" placeholder="请输入小区/写字楼/学校等" v-model="keyword">
+        <span class="g-btn" @click="searchPlace">搜索</span>
+      </div>
       <div class="s-empty">
         <p>找不到地址？</p>
         <p>尝试输入小区、写字楼或学校名</p>
         <p>详细地址（如门牌号等）可稍后输入哦</p>
       </div>
 
-      <ul class="bf">
+      <ul class="bf" v-if="searchResultList.length">
         <li>
           <h3>老曹饭店</h3>
           <p>北京市顺义区赵各庄村通商路43号</p>
-        </li>
-        <li>
-          <h3>老曹饭店老曹饭店老曹饭店老曹饭店老曹饭店老曹饭店老曹饭店老曹饭店老曹饭店老曹饭店v</h3>
-          <p>北京市顺义区赵各庄村通商路43号北京市顺义区赵各庄村通商路43号北京市顺义区赵各庄村通商路43号北京市顺义区赵各庄村通商路43号北京市顺义区赵各庄村通商路43号北京市顺义区赵各庄村通商路43号北京市顺义区赵各庄村通商路43号</p>
         </li>
       </ul>
     </div>
@@ -29,12 +24,18 @@
 </template>
 
 <script>
-import Header from '../../../../../components/header'
+import { mapMutations } from 'vuex'
+import { Toast } from 'mint-ui'
+import Ju from '@lib/js/judge'
+import Api from '@src/service/api'
+import Res from '@src/service/res'
+import Header from '@src/components/header'
 
 export default {
   data () {
     return {
-      sex: ''
+      keyword: '',
+      searchResultList: [] // 搜索结果列表
     }
   },
   created () {
@@ -50,7 +51,27 @@ export default {
 
   },
   methods: {
+    ...mapMutations(['Set_LocationAddress']),
 
+    // 搜索地址
+    async searchPlace () {
+      try {
+        if (Ju.isEmpty(this.keyword)) {
+          throw new Error('搜索关键词不能为空')
+        }
+        let list = await Api.searchPlace()
+        Res(list, data => {
+          this.searchResultList = data
+        })
+      } catch (err) {
+        Toast(err.message || '搜索失败')
+      }
+    },
+
+    // 选择地址
+    selectAddress () {
+      this.Set_LocationAddress('ABC')
+    }
   },
   watch: {
 

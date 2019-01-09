@@ -7,25 +7,26 @@
         <li>
           <label for="">联系人</label>
           <div>
-            <input type="text" placeholder="你的名字">
+            <input type="text" placeholder="你的名字" v-model="receiverName">
             <p>
-              <span><i><SvgIcon class="icon-style" iconName="gou-l" /></i>先生</span>
-              <span><i><SvgIcon class="icon-style" iconName="gou-h" /></i>女士</span>
+              <span @click="receiverSex = 'male'"><i><SvgIcon class="icon-style" :iconName="receiverSex === 'male' ? 'gou-l' : 'gou-h'" /></i>先生</span>
+              <span @click="receiverSex = 'female'"><i><SvgIcon class="icon-style" :iconName="receiverSex === 'male' ? 'gou-h' : 'gou-l'" /></i>女士</span>
             </p>
           </div>
         </li>
         <li>
-          <label for="">联系电话</label>
+          <label for="" @click="testFn">联系电话</label>
           <div>
-            <router-link tag="input" to="/confirmOrder/chooseAddress/addAddress/userValidation" type="text" placeholder="你的手机号"></router-link>
-            <dfn><SvgIcon class="icon-style" iconName="add" /></dfn>
-            <input type="text" placeholder="备选电话">
+            <input class="phone" type="text" placeholder="你的手机号" style="border-bottom: none;" v-model="receiverPhone"/>
+            <dfn class="tac cf" @click="checkPhone">验证手机号</dfn>
+            <!-- <input type="text" placeholder="备选电话"> -->
           </div>
         </li>
         <li>
           <label for="">送餐地址</label>
           <div>
-            <router-link tag="input" to="/confirmOrder/chooseAddress/addAddress/searchAddress" type="text" placeholder="小区/写字楼/学校等"></router-link>
+            <!-- <router-link tag="input" to="/confirmOrder/chooseAddress/addAddress/searchAddress" type="text" placeholder="小区/写字楼/学校等" v-model="locationAddress"></router-link> -->
+            <input type="text" placeholder="小区/写字楼/学校等" v-model="locationAddress" @click="$router.push('/confirmOrder/chooseAddress/addAddress/searchAddress')"/>
             <input type="text" placeholder="详细地址（如门牌号等）">
           </div>
         </li>
@@ -49,12 +50,20 @@
 </template>
 
 <script>
-import Header from '../../../../components/header'
+import { mapState } from 'vuex'
+import { Toast } from 'mint-ui'
+import Va from '@lib/js/validator'
+// import Api from '@src/service/api'
+// import Res from '@src/service/res'
+import Header from '@src/components/header'
 
 export default {
   data () {
     return {
-      sex: ''
+      receiverName: '',
+      receiverSex: 'male',
+      receiverPhone: ''
+
     }
   },
   created () {
@@ -67,10 +76,28 @@ export default {
     Header
   },
   computed: {
-
+    ...mapState(['isVerifyPhone', 'locationAddress'])
   },
   methods: {
+    // 验证手机号码
+    checkPhone () {
+      try {
+        let va = new Va()
+        va.add(this.receiverPhone, [{ rule: 'isEmpty', msg: '手机号不能为空' }, { rule: 'regexpPhone', msg: '手机号格式有误' }])
+        let vaResult = va.start()
+        if (vaResult) {
+          throw new Error(vaResult)
+        }
+        this.$router.push('/confirmOrder/chooseAddress/addAddress/userValidation')
+      } catch (err) {
+        Toast(err.message || '验证失败')
+      }
+    },
 
+    // 测试
+    testFn () {
+      console.log(this.isVerifyPhone)
+    }
   },
   watch: {
 
@@ -119,10 +146,18 @@ export default {
             }
           }
         }
+        input.phone{
+          padding-right: 1rem;
+          box-sizing: border-box;
+        }
         dfn{
+          .hlh(0.3rem);
+          .bg(@c-blue);
+          width: 0.85rem;
           position: absolute;
           right: 0;
-          top: 0.2rem;
+          top: 0.15rem;
+          border-radius: 0.05rem;
         }
       }
     }

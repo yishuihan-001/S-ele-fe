@@ -5,42 +5,45 @@
     <div class="main">
       <div class="r-quick bf">
         <h3 class="f18">快速备注</h3>
-        <div class="oh">
-          <span><i>不要辣</i><em class="active">少点辣</em><dfn>多点辣</dfn></span>
-          <span><em class="active">不要香菜</em></span>
-          <span><em>不要洋葱</em></span>
-          <span><em>多点醋</em></span>
-          <span><em>多点葱</em></span>
-          <span><em>去冰</em><dfn>少冰</dfn></span>
-        </div>
+        <ul class="oh">
+          <li v-for="(item, index) in remarkList" :key="index">
+            <span v-for="(it, id) in item" :key="id" @click="addRemove(it.id)" :class="[selectRemarkList.indexOf(it.id) > -1 ? 'active' : '']">{{it.label}}</span>
+          </li>
+        </ul>
       </div>
 
       <div class="r-other bf">
         <h3 class="f18">其他备注</h3>
-        <textarea class="g-input" placeholder="请输入备注内容(可不填)"></textarea>
+        <textarea class="g-input" placeholder="请输入备注内容(可不填)" v-model="selfRemarks"></textarea>
       </div>
 
       <div class="r-btn bf">
-        <span class="g-btn">确定</span>
+        <span class="g-btn" @click="confirmRemark">确定</span>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import Header from '../../../components/header'
+import { mapMutations } from 'vuex'
+import { Toast } from 'mint-ui'
+import Api from '@src/service/api'
+import Res from '@src/service/res'
+import Header from '@src/components/header'
 
 export default {
   data () {
     return {
-
+      remarkList: [],
+      selectRemarkList: [],
+      selfRemarks: ''
     }
   },
   created () {
 
   },
   mounted () {
-
+    this.initData()
   },
   components: {
     Header
@@ -49,7 +52,34 @@ export default {
 
   },
   methods: {
+    ...mapMutations(['Set_RemarkIdList', 'Set_SelfRemarks']),
 
+    async initData () {
+      try {
+        let list = await Api.shopRemarkAll()
+        Res(list, data => {
+          this.remarkList = data
+        })
+      } catch (err) {
+        Toast(err.message || '备注信息获取失败')
+      }
+    },
+
+    // 添加或者移除该项备注
+    addRemove (id) {
+      let index = this.selectRemarkList.indexOf(id)
+      if (index > -1) {
+        this.selectRemarkList.splice(index, 1)
+      } else {
+        this.selectRemarkList.push(id)
+      }
+    },
+
+    // 确认提交备注
+    confirmRemark () {
+      this.Set_RemarkIdList(this.selectRemarkList)
+      this.Set_SelfRemarks(this.selfRemarks)
+    }
   },
   watch: {
 
@@ -70,25 +100,22 @@ export default {
     h3{
       .hlh(0.45rem);
     }
-    span{
+    li{
       .border(solid, @c-blue, 1px);
+      border-right: solid transparent 1px;
+      overflow: hidden;
       float: left;
       margin: 0 0.15rem 0.1rem 0;
       border-radius: 5px;
-      i,em,dfn{
-        .disib;
-        padding: 0.05rem 0.1rem;
-      }
-      i{
-        .border(solid, @c-blue, 0, 1px, 0, 0);
-      }
-      dfn{
-        .border(solid, @c-blue, 0, 0, 0, 1px);
-      }
-      i.active,em.active,dfn.active{
-        .bg(@c-blue);
-        color: #fff;
-      }
+    }
+    span{
+      .disib;
+      .border(solid, @c-blue, 0, 1px, 0, 0);
+      padding: 0.05rem 0.1rem;
+    }
+    span.active{
+      .bg(@c-blue);
+      color: #fff;
     }
   }
 

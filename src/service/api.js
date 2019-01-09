@@ -48,11 +48,6 @@ Api.userChangePassword = data => fetch('/user/changePassword', data, 'post')
  * 商铺
  */
 /**
- * 获取商品列表
- */
-Api.foodList = data => fetch('/shopping/food/getList', data)
-
-/**
  * 获取所有商铺分类
  */
 Api.shopCategoryAll = () => fetch('/shopping/category/all')
@@ -66,6 +61,21 @@ Api.shopDeliveryAll = () => fetch('/shopping/delivery/all')
  * 获取所有商家属性标签
  */
 Api.shopLabelAll = () => fetch('/shopping/label/all')
+
+/**
+ * 获取所有备注标签
+ */
+Api.shopRemarkAll = () => fetch('/shopping/remark/all')
+
+/**
+ * 获取商品列表
+ */
+Api.foodList = data => fetch('/shopping/food/getList', data)
+
+/**
+ * 获取商品详情
+ */
+Api.foodDetail = data => fetch('/shopping/food/detail/' + data)
 
 /**
  * 获取商铺详情
@@ -104,6 +114,29 @@ Api.getTags = data => fetch('/shopping/rate/getTags/' + data)
  * 创建结算信息
  */
 Api.accountCreate = data => fetch('/order/account/create', data, 'post')
+
+/**
+ * 获取结算信息
+ */
+Api.accountDetail = data => fetch('/order/account/getInfo/' + data)
+
+/**
+ * 配送地址
+ */
+/**
+ * 创建地址
+ */
+Api.addressCreate = data => fetch('/address/addAddress', data, 'post')
+
+/**
+ * 获取地址列表
+ */
+Api.addressList = () => fetch('/address/getAddressList')
+
+/**
+ * 删除地址
+ */
+Api.addressRemove = data => fetch('/address//removeAddress/' + data)
 
 /**
  * 其他
