@@ -13,8 +13,8 @@
           <div class="ca-left"><SvgIcon class="icon-style" iconName="site" /></div>
           <div class="ca-right" v-if="!userInfo || !currentAddress">请添加一个收获地址</div>
           <div class="ca-right" v-else>
-            <h3><span class="f16 fwb">{{currentAddress.name}}</span><em>{{item.male === 'male' ? '先生' : item.male === 'female' ? '女士' : ''}}</em><dfn>{{item.phone}}</dfn></h3>
-            <p><i>{{item.tag}}</i>{{item.address + item.address_detail}}</p>
+            <h3><span class="f16 fwb">{{currentAddress.name}}</span><em>{{currentAddress.sex === 'male' ? '先生' : currentAddress.sex === 'female' ? '女士' : ''}}</em><dfn>{{currentAddress.phone}}</dfn></h3>
+            <p><i>{{currentAddress.tag}}</i>{{currentAddress.address + currentAddress.address_detail}}</p>
           </div>
         </div>
         <span><SvgIcon class="icon-style" iconName="arrow-right" /></span>
@@ -23,7 +23,7 @@
       <div class="c-arriveTime">
         <span class="f18 fwb c0" @click="printData">送达时间</span>
         <div>
-          <p>尽快送达 | 预计 18:48</p>
+          <p>尽快送达 | 预计 18:58</p>
           <p><span>蜂鸟专送</span></p>
         </div>
       </div>
@@ -60,7 +60,7 @@
 
     <div class="c-comfirmPay pf">
       <span class="f18 cf" v-if="accountInfo">待支付 ¥{{accountInfo.total_price.toFixed(2)}}</span>
-      <router-link class="f18 tac cf" to="/confirmOrder/payment" tag="em">确认下单</router-link>
+      <em class="f18 tac cf" @click="createOrder">确认下单</em>
     </div>
 
     <Dialog :show="showPayType" @click.native="showPayType=false"/>
@@ -69,11 +69,11 @@
       <div class="c-type pa bf" v-show="showPayType">
         <h3 class="tac f18">支付方式</h3>
         <ul>
-          <li>
-            <span class="c6">货到付款（商家不支持货到付款）</span>
+          <li @click="payOnline = false">
+            <span>货到付款</span>
             <em><i class="flex"><SvgIcon class="icon-style" :iconName="payOnline ? 'gou-h' : 'gou-l'" /></i></em>
           </li>
-          <li>
+          <li @click="payOnline = true">
             <span>在线支付</span>
             <em><i class="flex"><SvgIcon class="icon-style" :iconName="payOnline ? 'gou-l' : 'gou-h'" /></i></em>
           </li>
@@ -88,8 +88,9 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 import { Toast } from 'mint-ui'
+import Va from '@lib/js/validator'
 import Util from '@lib/js/util'
 import Api from '@src/service/api'
 import Res from '@src/service/res'
@@ -127,14 +128,36 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['Set_ReceiveAddress', 'Set_CurrentAddress']),
+
     async initData () {
       try {
         let info = await Api.accountDetail(this.accountId)
         Res(info, data => {
           this.accountInfo = data
         })
+        this.initAddress()
       } catch (err) {
         Toast(err.message || '获取结算信息失败')
+      }
+    },
+
+    // 初始化地址列表
+    async initAddress () {
+      try {
+        let list = await Api.addressList()
+        Res(list, data => {
+          let acitveAddress
+          data.forEach(item => {
+            if (item.is_default) {
+              acitveAddress = item
+            }
+          })
+          this.Set_CurrentAddress(acitveAddress)
+          this.Set_ReceiveAddress(data)
+        })
+      } catch (err) {
+        Toast(err.message || '地址列表更新失败')
       }
     },
 
@@ -142,6 +165,7 @@ export default {
     printData () {
       console.log(this.remarkIdList)
       console.log(this.selfRemarks)
+      console.log(this.currentAddress)
     },
 
     // 地址列表
@@ -150,6 +174,43 @@ export default {
         return Toast('您还没有登录哦~')
       }
       this.$router.push('/confirmOrder/chooseAddress')
+    },
+
+    // 生成订单
+    async createOrder () {
+      if (!this.userInfo) {
+        return Toast('您还没有登录哦~')
+      }
+      try {
+        let orderInfo = {
+          account_id: +this.accountId,
+          address_id: this.currentAddress && this.currentAddress.id,
+          restaurant_id: this.accountInfo && this.accountInfo.restaurant_id,
+          hongbao: Math.floor(Math.random() * 10),
+          pay_type: this.payOnline ? 1 : 0,
+          remarks: this.remarkIdList || [],
+          self_remarks: this.selfRemarks || '',
+          need_invoice: false,
+          invoice: '爱是你我'
+        }
+        let va = new Va()
+        va.add(orderInfo.account_id, [{ rule: 'isEmpty', msg: '结算id不能为空' }])
+        va.add(orderInfo.address_id, [{ rule: 'isEmpty', msg: '地址id不能为空' }])
+        va.add(orderInfo.restaurant_id, [{ rule: 'isEmpty', msg: '商铺id不能为空' }])
+        let vaResult = va.start()
+        if (vaResult) {
+          throw new Error(vaResult)
+        }
+        let orderId = await Api.orderCreate(orderInfo)
+        Res(orderId, data => {
+          Toast('订单创建成功')
+          setTimeout(() => {
+            this.$router.push('/confirmOrder/payment/' + data)
+          }, 2000)
+        })
+      } catch (err) {
+        Toast(err.message || '订单创建失败')
+      }
     }
   },
   watch: {

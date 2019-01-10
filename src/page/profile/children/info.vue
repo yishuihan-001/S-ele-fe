@@ -8,28 +8,28 @@
           <label for="">头像</label>
           <span><em><img :src="$store.state.placeholderImg" alt=""></em><i><SvgIcon class="icon-style" iconName="arrow-right" /></i></span>
         </li>
-        <router-link tag="li" to="/profile/info/setusername">
+        <li @click="goTarget('/profile/info/setusername')">
           <label for="">用户名</label>
-          <span><dfn>15000000000</dfn><i><SvgIcon class="icon-style" iconName="arrow-right" /></i></span>
-        </router-link>
-        <router-link tag="li" to="/profile/info/address">
+          <span><dfn>{{userInfo ? userInfo.username : '未登录'}}</dfn><i><SvgIcon class="icon-style" iconName="arrow-right" /></i></span>
+        </li>
+        <li @click="goTarget('/profile/info/address')">
           <label for="">收货地址</label>
           <span><i><SvgIcon class="icon-style" iconName="arrow-right" /></i></span>
-        </router-link>
+        </li>
         <li class="title">
           <label for="">账号绑定</label>
         </li>
-        <li>
+        <li @click="goTarget('phone')">
           <label for="">手机</label>
           <span><i><SvgIcon class="icon-style" iconName="arrow-right" /></i></span>
         </li>
         <li class="title">
           <label for="">安全设置</label>
         </li>
-        <router-link tag="li" to="/forget">
+        <li @click="goTarget('/forget')">
           <label for="">登录密码</label>
           <span><dfn>修改</dfn><i><SvgIcon class="icon-style" iconName="arrow-right" /></i></span>
-        </router-link>
+        </li>
       </ul>
 
       <div class="r-btn">
@@ -44,7 +44,9 @@
 </template>
 
 <script>
-import Header from '../../../components/header'
+import { mapState } from 'vuex'
+import { Toast } from 'mint-ui'
+import Header from '@src/components/header'
 
 export default {
   data () {
@@ -62,10 +64,19 @@ export default {
     Header
   },
   computed: {
-
+    ...mapState(['userInfo'])
   },
   methods: {
-
+    // 前往
+    goTarget (url) {
+      if (url === 'phone') {
+        return Toast('请在手机App中设置')
+      }
+      if (!this.userInfo) {
+        return Toast('您还没有登录哦')
+      }
+      this.$router.push(url)
+    }
   },
   watch: {
 

@@ -27,19 +27,32 @@
           <div>
             <!-- <router-link tag="input" to="/confirmOrder/chooseAddress/addAddress/searchAddress" type="text" placeholder="小区/写字楼/学校等" v-model="locationAddress"></router-link> -->
             <input type="text" placeholder="小区/写字楼/学校等" v-model="locationAddress" @click="$router.push('/confirmOrder/chooseAddress/addAddress/searchAddress')"/>
-            <input type="text" placeholder="详细地址（如门牌号等）">
+            <input type="text" placeholder="详细地址（如门牌号等）" v-model="receiverDetailAddress">
           </div>
         </li>
         <li>
           <label for="">标签</label>
           <div>
-            <input type="text" placeholder="无/家/学校/公司">
+            <p>
+              <span @click="receiverTag = '家'"><i><SvgIcon class="icon-style" :iconName="receiverTag === '家' ? 'gou-l' : 'gou-h'" /></i>家</span>
+              <span @click="receiverTag = '公司'"><i><SvgIcon class="icon-style" :iconName="receiverTag === '公司' ? 'gou-l' : 'gou-h'" /></i>公司</span>
+              <span @click="receiverTag = '学校'"><i><SvgIcon class="icon-style" :iconName="receiverTag === '学校' ? 'gou-l' : 'gou-h'" /></i>学校</span>
+            </p>
+          </div>
+        </li>
+        <li>
+          <label for="">设为默认</label>
+          <div>
+            <p>
+              <span @click="receiverDefault = true"><i><SvgIcon class="icon-style" :iconName="receiverDefault ? 'gou-l' : 'gou-h'" /></i>是</span>
+              <span @click="receiverDefault = false"><i><SvgIcon class="icon-style" :iconName="!receiverDefault ? 'gou-l' : 'gou-h'" /></i>否</span>
+            </p>
           </div>
         </li>
       </ul>
 
       <div class="r-btn bf">
-        <span class="g-btn">确定</span>
+        <span class="g-btn" @click="confirmAdd">确定</span>
       </div>
     </div>
 
@@ -50,20 +63,22 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 import { Toast } from 'mint-ui'
 import Va from '@lib/js/validator'
-// import Api from '@src/service/api'
-// import Res from '@src/service/res'
+import Api from '@src/service/api'
+import Res from '@src/service/res'
 import Header from '@src/components/header'
 
 export default {
   data () {
     return {
-      receiverName: '',
-      receiverSex: 'male',
-      receiverPhone: ''
-
+      receiverName: '', // 收货人姓名
+      receiverSex: 'male', // 收货人性别
+      receiverPhone: '', // 收货人电话
+      receiverDetailAddress: '', // 详细收货地址
+      receiverTag: '家', // 标签
+      receiverDefault: true // 是否设为默认收货地址
     }
   },
   created () {
@@ -79,6 +94,8 @@ export default {
     ...mapState(['isVerifyPhone', 'locationAddress'])
   },
   methods: {
+    ...mapMutations(['Set_ReceiveAddress']),
+
     // 验证手机号码
     checkPhone () {
       try {
@@ -94,9 +111,60 @@ export default {
       }
     },
 
+    // 添加收货地址
+    async confirmAdd () {
+      try {
+        let va = new Va()
+        va.add(this.receiverName, [{ rule: 'isEmpty', msg: '收货人姓名不能为空' }])
+        va.add(this.receiverSex, [{ rule: 'isEmpty', msg: '请选择收货人性别' }])
+        va.add(this.receiverPhone, [{ rule: 'isEmpty', msg: '收货人联系电话不能为空' }])
+        va.add(String(this.isVerifyPhone), [{ rule: 'equal:true', msg: '收货人联系电话尚未验证' }])
+        va.add(this.locationAddress, [{ rule: 'isEmpty', msg: '收货地址不能为空' }])
+        va.add(this.receiverDetailAddress, [{ rule: 'isEmpty', msg: '详细地址不能为空' }])
+        va.add(this.receiverTag, [{ rule: 'isEmpty', msg: '请选择标签' }])
+        va.add(this.receiverDefault, [{ rule: 'isEmpty', msg: '请选择是否设为默认' }])
+        let vaResult = va.start()
+        if (vaResult) {
+          throw new Error(vaResult)
+        }
+        let addressInfo = {
+          address: this.locationAddress,
+          address_detail: this.receiverDetailAddress,
+          name: this.receiverName,
+          phone: this.receiverPhone,
+          sex: this.receiverSex,
+          tag: this.receiverTag,
+          is_default: this.receiverDefault
+        }
+        let resObj = await Api.addressCreate(addressInfo)
+        Res(resObj, data => {
+          this.updateReceiveAddress()
+        })
+      } catch (err) {
+        Toast(err.message || '添加失败')
+      }
+    },
+
+    // 更新收货地址列表
+    async updateReceiveAddress () {
+      try {
+        let list = await Api.addressList()
+        Res(list, data => {
+          this.Set_ReceiveAddress(data)
+          Toast('地址添加成功')
+          setTimeout(() => {
+            this.$router.back()
+          }, 2000)
+        })
+      } catch (err) {
+        Toast(err.message || '地址列表更新失败')
+      }
+    },
+
     // 测试
     testFn () {
       console.log(this.isVerifyPhone)
+      console.log(this.locationAddress)
     }
   },
   watch: {

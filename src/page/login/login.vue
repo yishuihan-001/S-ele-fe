@@ -107,7 +107,8 @@ export default {
           Toast('登录成功')
           this.Set_UserInfo(data)
           setTimeout(() => {
-            this.$router.push('/msite')
+            // this.$router.push('/msite')
+            this.$router.back()
           }, 1500)
         })
       } catch (err) {

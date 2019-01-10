@@ -45,6 +45,11 @@ Api.userSignout = () => fetch('/user/signout')
 Api.userChangePassword = data => fetch('/user/changePassword', data, 'post')
 
 /**
+ * 修改用户名
+ */
+Api.userChangeUsername = data => fetch('/user/changeUsername', data, 'post')
+
+/**
  * 商铺
  */
 /**
@@ -119,6 +124,16 @@ Api.accountCreate = data => fetch('/order/account/create', data, 'post')
  * 获取结算信息
  */
 Api.accountDetail = data => fetch('/order/account/getInfo/' + data)
+
+/**
+ * 创建订单
+ */
+Api.orderCreate = data => fetch('/order/indent/create', data, 'post')
+
+/**
+ * 获取订单详情
+ */
+Api.orderDetail = data => fetch('/order/indent/detail/' + data)
 
 /**
  * 配送地址

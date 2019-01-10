@@ -4,10 +4,10 @@
 
     <div class="main">
       <ul class="c-list pa">
-        <li v-for="(item, index) in addressList" :key="index">
-          <div class="ca-left"><SvgIcon class="icon-style" iconName="gou-l" /></div>
+        <li v-for="(item, index) in receiveAddress" :key="index" @click="selectAddress(item)">
+          <div class="ca-left"><SvgIcon class="icon-style" iconName="gou-l" v-if="item.is_default"/></div>
           <div class="ca-right">
-            <h3><span class="f16 fwb">{{item.name}}</span><em>{{item.male === 'male' ? '先生' : item.male === 'female' ? '女士' : ''}}</em><dfn>{{item.phone}}</dfn></h3>
+            <h3><span class="f16 fwb">{{item.name}}</span><em>{{item.sex === 'male' ? '先生' : item.sex === 'female' ? '女士' : ''}}</em><dfn>{{item.phone}}</dfn></h3>
             <p><i>{{item.tag}}</i>{{item.address + item.address_detail}}</p>
           </div>
         </li>
@@ -25,40 +25,34 @@
 </template>
 
 <script>
-// import { mapState } from 'vuex'
-import { Toast } from 'mint-ui'
-import Api from '@src/service/api'
-import Res from '@src/service/res'
+import { mapState, mapMutations } from 'vuex'
 import Header from '@src/components/header'
 
 export default {
   data () {
     return {
-      addressList: []
+
     }
   },
   created () {
 
   },
   mounted () {
-    this.initData()
+
   },
   components: {
     Header
   },
   computed: {
-
+    ...mapState(['receiveAddress'])
   },
   methods: {
-    async initData () {
-      try {
-        let list = await Api.addressList()
-        Res(list, data => {
-          this.addressList = data
-        })
-      } catch (err) {
-        Toast(err.message || '获取收货地址列表失败')
-      }
+    ...mapMutations(['Set_CurrentAddress']),
+
+    // 选择当前收货地址
+    selectAddress (item) {
+      this.Set_CurrentAddress(item)
+      this.$router.back()
     }
   },
   watch: {

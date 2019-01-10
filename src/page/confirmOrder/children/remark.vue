@@ -7,14 +7,14 @@
         <h3 class="f18">快速备注</h3>
         <ul class="oh">
           <li v-for="(item, index) in remarkList" :key="index">
-            <span v-for="(it, id) in item" :key="id" @click="addRemove(it.id)" :class="[selectRemarkList.indexOf(it.id) > -1 ? 'active' : '']">{{it.label}}</span>
+            <span v-for="(it, id) in item" :key="id" @click="addRemove(it.id, item)" :class="[selectRemarkList.indexOf(it.id) > -1 ? 'active' : '']">{{it.label}}</span>
           </li>
         </ul>
       </div>
 
       <div class="r-other bf">
         <h3 class="f18">其他备注</h3>
-        <textarea class="g-input" placeholder="请输入备注内容(可不填)" v-model="selfRemarks"></textarea>
+        <textarea class="g-input" placeholder="请输入备注内容(可不填)" v-model="currSelfRemarks"></textarea>
       </div>
 
       <div class="r-btn bf">
@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 import { Toast } from 'mint-ui'
 import Api from '@src/service/api'
 import Res from '@src/service/res'
@@ -36,7 +36,7 @@ export default {
     return {
       remarkList: [],
       selectRemarkList: [],
-      selfRemarks: ''
+      currSelfRemarks: ''
     }
   },
   created () {
@@ -49,7 +49,7 @@ export default {
     Header
   },
   computed: {
-
+    ...mapState(['remarkIdList', 'selfRemarks'])
   },
   methods: {
     ...mapMutations(['Set_RemarkIdList', 'Set_SelfRemarks']),
@@ -59,6 +59,8 @@ export default {
         let list = await Api.shopRemarkAll()
         Res(list, data => {
           this.remarkList = data
+          this.selectRemarkList = JSON.parse(JSON.stringify(this.remarkIdList))
+          this.currSelfRemarks = this.selfRemarks
         })
       } catch (err) {
         Toast(err.message || '备注信息获取失败')
@@ -66,7 +68,13 @@ export default {
     },
 
     // 添加或者移除该项备注
-    addRemove (id) {
+    addRemove (id, item) {
+      item.forEach(it => {
+        let _id = this.selectRemarkList.indexOf(it.id)
+        if (_id > -1 && id !== it.id) {
+          this.selectRemarkList.splice(_id, 1)
+        }
+      })
       let index = this.selectRemarkList.indexOf(id)
       if (index > -1) {
         this.selectRemarkList.splice(index, 1)
@@ -78,7 +86,8 @@ export default {
     // 确认提交备注
     confirmRemark () {
       this.Set_RemarkIdList(this.selectRemarkList)
-      this.Set_SelfRemarks(this.selfRemarks)
+      this.Set_SelfRemarks(this.currSelfRemarks)
+      this.$router.back()
     }
   },
   watch: {

@@ -3,54 +3,54 @@
     <Header back="true" title="我的" noRight="true"/>
 
     <div class="main">
-      <router-link tag="div" :to="isLogin ? '/profile/info' : '/login'" class="p-user">
+      <router-link tag="div" :to="userInfo ? '/profile/info' : '/login'" class="p-user">
         <span><img :src="$store.state.placeholderImg" alt=""></span>
         <div>
-          <p class="f18 fwb">登录/注册</p>
+          <p class="f18 fwb">{{userInfo ? userInfo.username : '登录/注册'}}</p>
           <p><i><SvgIcon class="icon-style" iconName="phone" /></i>暂无绑定手机号</p>
         </div>
         <i><SvgIcon class="icon-style" iconName="arrow-right-white" /></i>
       </router-link>
 
       <div class="p-info bf">
-        <router-link tag="div" to="/balance">
-          <h3><span>0.00</span>元</h3>
+        <div @click="goTarget('/balance', true)">
+          <h3><span>{{userInfo ? (Math.random() * 100).toFixed(2) : '0.00'}}</span>元</h3>
           <p>我的余额</p>
-        </router-link>
-        <router-link tag="div" to="/benefit">
-          <h3><span>3</span>个</h3>
+        </div>
+        <div @click="goTarget('/benefit', true)">
+          <h3><span>{{userInfo ? Math.floor(Math.random() * 100 ): 0}}</span>个</h3>
           <p>我的优惠</p>
-        </router-link>
-        <router-link tag="div" to="/points">
-          <h3><span>900</span>分</h3>
+        </div>
+        <div @click="goTarget('/points', true)">
+          <h3><span>{{userInfo ? Math.floor(Math.random() * 1000 ): 0}}</span>分</h3>
           <p>我的积分</p>
-        </router-link>
+        </div>
       </div>
 
       <ul class="bf">
-        <router-link tag="li" to="/order">
+        <li @click="goTarget('/order', true)">
           <div><i><SvgIcon class="icon-style" iconName="p-order" /></i>我的订单</div>
           <span><SvgIcon class="icon-style" iconName="arrow-right" /></span>
-        </router-link>
-        <router-link tag="li" to="/points">
+        </li>
+        <li @click="goTarget('/points')">
           <div><i><SvgIcon class="icon-style" iconName="p-score" /></i>积分商城</div>
           <span><SvgIcon class="icon-style" iconName="arrow-right" /></span>
-        </router-link>
-        <router-link tag="li" to="/vipcard">
+        </li>
+        <li @click="goTarget('/vipcard')">
           <div><i><SvgIcon class="icon-style" iconName="p-vip" /></i>饿了么会员卡</div>
           <span><SvgIcon class="icon-style" iconName="arrow-right" /></span>
-        </router-link>
+        </li>
       </ul>
 
       <ul class="bf">
-        <router-link tag="li" to="/service">
+        <li @click="goTarget('/service')">
           <div><i><SvgIcon class="icon-style" iconName="p-service" /></i>服务中心</div>
           <span><SvgIcon class="icon-style" iconName="arrow-right" /></span>
-        </router-link>
-        <router-link tag="li" to="/download">
+        </li>
+        <li @click="goTarget('/download')">
           <div><i><SvgIcon class="icon-style" iconName="p-elm" /></i>下载饿了么APP</div>
           <span><SvgIcon class="icon-style" iconName="arrow-right" /></span>
-        </router-link>
+        </li>
       </ul>
     </div>
 
@@ -62,13 +62,15 @@
 </template>
 
 <script>
-import Header from '../../components/header'
-import Footer from '../../components/footer'
+import { mapState } from 'vuex'
+import { Toast } from 'mint-ui'
+import Header from '@src/components/header'
+import Footer from '@src/components/footer'
 
 export default {
   data () {
     return {
-      isLogin: true
+
     }
   },
   created () {
@@ -82,10 +84,16 @@ export default {
     Footer
   },
   computed: {
-
+    ...mapState(['userInfo'])
   },
   methods: {
-
+    // 前往
+    goTarget (url, boo) {
+      if (boo && !this.userInfo) {
+        return Toast('您还没有登录哦')
+      }
+      this.$router.push(url)
+    }
   },
   watch: {
 

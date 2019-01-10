@@ -13,18 +13,18 @@ const search = r => require.ensure([], () => r(require('../page/search/search'))
 /* A */ const foodDetail = r => require.ensure([], () => r(require('../page/shop/children/foodDetail')), 'foodDetail')
 /* A */ const shopDetail = r => require.ensure([], () => r(require('../page/shop/children/shopDetail')), 'shopDetail')
 /* A */ const shopSafe = r => require.ensure([], () => r(require('../page/shop/children/children/shopSafe')), 'shopSafe')
-const confirmOrder = r => require.ensure([], () => r(require('../page/confirmOrder/confirmOrder')), 'confirmOrder')
+/* A */ const confirmOrder = r => require.ensure([], () => r(require('../page/confirmOrder/confirmOrder')), 'confirmOrder')
 /* A */ const remark = r => require.ensure([], () => r(require('../page/confirmOrder/children/remark')), 'remark')
 /* A */ const invoice = r => require.ensure([], () => r(require('../page/confirmOrder/children/invoice')), 'invoice')
-const payment = r => require.ensure([], () => r(require('../page/confirmOrder/children/payment')), 'payment')
-const chooseAddress = r => require.ensure([], () => r(require('../page/confirmOrder/children/chooseAddress')), 'chooseAddress')
-const addAddress = r => require.ensure([], () => r(require('../page/confirmOrder/children/children/addAddress')), 'addAddress')
+/* A */ const payment = r => require.ensure([], () => r(require('../page/confirmOrder/children/payment')), 'payment')
+/* A */ const chooseAddress = r => require.ensure([], () => r(require('../page/confirmOrder/children/chooseAddress')), 'chooseAddress')
+/* A */ const addAddress = r => require.ensure([], () => r(require('../page/confirmOrder/children/children/addAddress')), 'addAddress')
 /* A */ const userValidation = r => require.ensure([], () => r(require('../page/confirmOrder/children/children/children/userValidation')), 'userValidation')
-const searchAddress = r => require.ensure([], () => r(require('../page/confirmOrder/children/children/children/searchAddress')), 'searchAddress')
+/* A */ const searchAddress = r => require.ensure([], () => r(require('../page/confirmOrder/children/children/children/searchAddress')), 'searchAddress')
 /* A */ const login = r => require.ensure([], () => r(require('../page/login/login')), 'login')
-const profile = r => require.ensure([], () => r(require('../page/profile/profile')), 'profile')
-const info = r => require.ensure([], () => r(require('../page/profile/children/info')), 'info')
-const setusername = r => require.ensure([], () => r(require('../page/profile/children/children/setusername')), 'setusername')
+/* A */ const profile = r => require.ensure([], () => r(require('../page/profile/profile')), 'profile')
+/* A */ const info = r => require.ensure([], () => r(require('../page/profile/children/info')), 'info')
+/* A */ const setusername = r => require.ensure([], () => r(require('../page/profile/children/children/setusername')), 'setusername')
 const address = r => require.ensure([], () => r(require('../page/profile/children/children/address')), 'address')
 const add = r => require.ensure([], () => r(require('../page/profile/children/children/children/add')), 'add')
 const addDetail = r => require.ensure([], () => r(require('../page/profile/children/children/children/children/addDetail')), 'addDetail')
@@ -118,7 +118,7 @@ const routes = [
         component: invoice
       },
       {
-        path: 'payment', // 付款页面
+        path: 'payment/:id', // 付款页面
         component: payment
       },
       {

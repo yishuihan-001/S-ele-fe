@@ -14,9 +14,9 @@
       </div>
 
       <ul class="bf" v-if="searchResultList.length">
-        <li>
-          <h3>老曹饭店</h3>
-          <p>北京市顺义区赵各庄村通商路43号</p>
+        <li v-for="(item, index) in searchResultList" :key="index" @click="selectAddress(item)">
+          <h3>{{item.title}}</h3>
+          <p>{{item.address}}</p>
         </li>
       </ul>
     </div>
@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 import { Toast } from 'mint-ui'
 import Ju from '@lib/js/judge'
 import Api from '@src/service/api'
@@ -48,7 +48,7 @@ export default {
     Header
   },
   computed: {
-
+    ...mapState(['currCity'])
   },
   methods: {
     ...mapMutations(['Set_LocationAddress']),
@@ -59,7 +59,10 @@ export default {
         if (Ju.isEmpty(this.keyword)) {
           throw new Error('搜索关键词不能为空')
         }
-        let list = await Api.searchPlace()
+        if (!this.currCity) {
+          throw new Error('位置信息获取失败')
+        }
+        let list = await Api.searchPlace({ cityId: this.currCity.id, keyword: this.keyword })
         Res(list, data => {
           this.searchResultList = data
         })
@@ -69,8 +72,9 @@ export default {
     },
 
     // 选择地址
-    selectAddress () {
-      this.Set_LocationAddress('ABC')
+    selectAddress (item) {
+      this.Set_LocationAddress(item.title)
+      this.$router.back()
     }
   },
   watch: {
