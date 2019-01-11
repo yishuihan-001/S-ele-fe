@@ -131,6 +131,11 @@ Api.accountDetail = data => fetch('/order/account/getInfo/' + data)
 Api.orderCreate = data => fetch('/order/indent/create', data, 'post')
 
 /**
+ * 获取用户订单列表
+ */
+Api.orderList = () => fetch('/order/indent/list')
+
+/**
  * 获取订单详情
  */
 Api.orderDetail = data => fetch('/order/indent/detail/' + data)
@@ -151,7 +156,12 @@ Api.addressList = () => fetch('/address/getAddressList')
 /**
  * 删除地址
  */
-Api.addressRemove = data => fetch('/address//removeAddress/' + data)
+Api.addressRemove = data => fetch('/address/removeAddress/' + data, '', 'delete')
+
+/**
+ * 获取地址详情
+ */
+Api.addressDetail = data => fetch('/address/getAddress/' + data)
 
 /**
  * 其他

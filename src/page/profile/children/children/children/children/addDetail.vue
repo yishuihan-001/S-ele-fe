@@ -4,8 +4,8 @@
 
     <div class="main">
       <div class="s-search bf f18 flex">
-        <input type="text" class="g-input" placeholder="请输入小区/写字楼/学校等">
-        <span class="g-btn">搜索</span>
+        <input type="text" class="g-input" placeholder="请输入小区/写字楼/学校等" v-model="keyword">
+        <span class="g-btn" @click="searchPlace">搜索</span>
       </div
       >
       <div class="s-empty">
@@ -14,14 +14,10 @@
         <p>详细地址（如门牌号等）可稍后输入哦</p>
       </div>
 
-      <ul class="bf">
-        <li>
-          <h3>老曹饭店</h3>
-          <p>北京市顺义区赵各庄村通商路43号</p>
-        </li>
-        <li>
-          <h3>老曹饭店老曹饭店老曹饭店老曹饭店老曹饭店老曹饭店老曹饭店老曹饭店老曹饭店老曹饭店v</h3>
-          <p>北京市顺义区赵各庄村通商路43号北京市顺义区赵各庄村通商路43号北京市顺义区赵各庄村通商路43号北京市顺义区赵各庄村通商路43号北京市顺义区赵各庄村通商路43号北京市顺义区赵各庄村通商路43号北京市顺义区赵各庄村通商路43号</p>
+      <ul class="bf" v-if="searchResultList.length">
+        <li v-for="(item, index) in searchResultList" :key="index" @click="selectAddress(item)">
+          <h3>{{item.title}}</h3>
+          <p>{{item.address}}</p>
         </li>
       </ul>
     </div>
@@ -29,12 +25,18 @@
 </template>
 
 <script>
-import Header from '../../../../../../components/header'
+import { mapState, mapMutations } from 'vuex'
+import { Toast } from 'mint-ui'
+import Ju from '@lib/js/judge'
+import Api from '@src/service/api'
+import Res from '@src/service/res'
+import Header from '@src/components/header'
 
 export default {
   data () {
     return {
-      sex: ''
+      keyword: '',
+      searchResultList: [] // 搜索结果列表
     }
   },
   created () {
@@ -47,10 +49,34 @@ export default {
     Header
   },
   computed: {
-
+    ...mapState(['currCity'])
   },
   methods: {
+    ...mapMutations(['Set_LocationAddress']),
 
+    // 搜索地址
+    async searchPlace () {
+      try {
+        if (Ju.isEmpty(this.keyword)) {
+          throw new Error('搜索关键词不能为空')
+        }
+        if (!this.currCity) {
+          throw new Error('位置信息获取失败')
+        }
+        let list = await Api.searchPlace({ cityId: this.currCity.id, keyword: this.keyword })
+        Res(list, data => {
+          this.searchResultList = data
+        })
+      } catch (err) {
+        Toast(err.message || '搜索失败')
+      }
+    },
+
+    // 选择地址
+    selectAddress (item) {
+      this.Set_LocationAddress(item.title)
+      this.$router.back()
+    }
   },
   watch: {
 

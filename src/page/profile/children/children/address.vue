@@ -7,7 +7,7 @@
     <div class="main">
       <div class="a-con pa">
         <ul>
-          <li v-for="(item, index) in addressList" :key="index">
+          <li v-for="(item, index) in receiveAddress" :key="index">
             <div>
               <p>{{item.address}}</p>
               <p>{{item.phone}}</p>
@@ -31,6 +31,7 @@
 </template>
 
 <script>
+import { mapState, mapMutations } from 'vuex'
 import { Toast, MessageBox } from 'mint-ui'
 import Api from '@src/service/api'
 import Res from '@src/service/res'
@@ -39,8 +40,7 @@ import Header from '@src/components/header'
 export default {
   data () {
     return {
-      ableDelete: false, // 可删除状态
-      addressList: [] // 地址列表
+      ableDelete: false // 可删除状态
     }
   },
   created () {
@@ -53,14 +53,16 @@ export default {
     Header
   },
   computed: {
-
+    ...mapState(['receiveAddress'])
   },
   methods: {
+    ...mapMutations(['Set_ReceiveAddress']),
+
     async initData () {
       try {
         let list = await Api.addressList()
         Res(list, data => {
-          this.addressList = data
+          this.Set_ReceiveAddress(data)
         })
       } catch (err) {
         Toast(err.message || '获取地址列表失败')
@@ -69,10 +71,20 @@ export default {
 
     // 删除地址
     removeAddress (item) {
-      MessageBox.confirm('确认要删除该地址吗？').then(() => {
-        /**
-         * @todo 待完成
-         */
+      MessageBox.confirm('确认要删除该地址吗？').then(async () => {
+        let resObj = await Api.addressRemove(item.id)
+        Res(resObj, () => {
+          let index
+          let arr = JSON.parse(JSON.stringify(this.receiveAddress))
+          arr.forEach((it, idx) => {
+            if (it.id === item.id) {
+              index = idx
+            }
+          })
+          arr.splice(index, 1)
+          this.Set_ReceiveAddress(arr)
+          Toast('删除成功')
+        })
       }).catch(() => {
 
       })

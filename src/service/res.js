@@ -2,6 +2,11 @@ import { Toast } from 'mint-ui'
 
 const failFn = (msg) => {
   Toast(msg)
+  if (msg.match('没有登录')) {
+    setTimeout(() => {
+      window.location.href = window.location.origin + '/login'
+    }, 1000)
+  }
 }
 
 export default (res, successCB, failCB = failFn) => {
