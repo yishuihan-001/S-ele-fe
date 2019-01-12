@@ -13,14 +13,13 @@
           <div class="bc-redpacket" v-if="showRedPacket" key="redpacket">
             <h3>
               <span>有<em>3</em>个红包即将到期</span>
-              <router-link tag="span" to="/benefit/coupon">
+              <router-link tag="span" to="/benefit/hbDescription">
                 <i><SvgIcon class="icon-style" iconName="wen" /></i>
                 <em>红包说明</em>
               </router-link>
             </h3>
             <ul>
-              <li><RedPacket :overdue="false"/></li>
-              <li><RedPacket :overdue="false"/></li>
+              <li v-for="(item, index) in redPacketList" :key="index"><RedPacket :info="item"/></li>
             </ul>
             <h4>限品类：快餐便当、特色菜系、小吃夜宵、甜品饮品、异国料理</h4>
             <p><router-link tag="span" to="/benefit/hbHistory">查看历史红包 ></router-link></p>
@@ -28,7 +27,7 @@
 
           <div class="bc-ticket" v-else key="ticket">
             <h3>
-              <router-link tag="span" to="/benefit/hbDescription">
+              <router-link tag="span" to="/benefit/coupon">
                 <i><SvgIcon class="icon-style" iconName="wen" /></i>
                 <em>商家代金券说明</em>
               </router-link>
@@ -38,7 +37,7 @@
               <p class="f18 tac">无法使用代金券</p>
               <p class="f12 c9 tac">非客户端或客户端版本过低</p>
               <div class="r-btn">
-                <span class="g-btn">下载或升级客户端</span>
+                <router-link tag="span" to="/download" class="g-btn">下载或升级客户端</router-link>
               </div>
             </div>
           </div>
@@ -58,20 +57,24 @@
 </template>
 
 <script>
-import Header from '../../components/header'
-import RedPacket from '../../components/redPacket'
+import { Toast } from 'mint-ui'
+import Api from '@src/service/api'
+import Res from '@src/service/res'
+import Header from '@src/components/header'
+import RedPacket from '@src/components/redPacket'
 
 export default {
   data () {
     return {
-      showRedPacket: true
+      showRedPacket: true, // 显示红包
+      redPacketList: [] // 红包列表
     }
   },
   created () {
 
   },
   mounted () {
-
+    this.initData()
   },
   components: {
     Header,
@@ -81,7 +84,16 @@ export default {
 
   },
   methods: {
-
+    async initData () {
+      try {
+        let list = await Api.hongbaoUsable({ offset: 0, limit: 20 })
+        Res(list, data => {
+          this.redPacketList = data
+        })
+      } catch (err) {
+        Toast(err.message || '获取红包列表失败')
+      }
+    }
   },
   watch: {
 

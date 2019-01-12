@@ -17,86 +17,10 @@
       <h3 class="f18">热门问题</h3>
 
       <ul>
-        <router-link tag="li" to="/service/questionDetail">
-          <span>超级会员权益说明</span>
+        <router-link tag="li" v-for="(item, index) in explainList" :key="index" :to="'/service/questionDetail/' + item.id">
+          <span>{{item.title}}</span>
           <i><SvgIcon class="icon-style" iconName="arrow-right" /></i>
         </router-link>
-        <li>
-          <span>签到规则</span>
-          <i><SvgIcon class="icon-style" iconName="arrow-right" /></i>
-        </li>
-        <li>
-          <span>超级会员权益说明</span>
-          <i><SvgIcon class="icon-style" iconName="arrow-right" /></i>
-        </li>
-        <li>
-          <span>签到规则</span>
-          <i><SvgIcon class="icon-style" iconName="arrow-right" /></i>
-        </li>
-        <li>
-          <span>超级会员权益说明</span>
-          <i><SvgIcon class="icon-style" iconName="arrow-right" /></i>
-        </li>
-        <li>
-          <span>签到规则</span>
-          <i><SvgIcon class="icon-style" iconName="arrow-right" /></i>
-        </li>
-        <li>
-          <span>超级会员权益说明</span>
-          <i><SvgIcon class="icon-style" iconName="arrow-right" /></i>
-        </li>
-        <li>
-          <span>签到规则</span>
-          <i><SvgIcon class="icon-style" iconName="arrow-right" /></i>
-        </li>
-        <li>
-          <span>超级会员权益说明</span>
-          <i><SvgIcon class="icon-style" iconName="arrow-right" /></i>
-        </li>
-        <li>
-          <span>签到规则</span>
-          <i><SvgIcon class="icon-style" iconName="arrow-right" /></i>
-        </li>
-        <li>
-          <span>超级会员权益说明</span>
-          <i><SvgIcon class="icon-style" iconName="arrow-right" /></i>
-        </li>
-        <li>
-          <span>签到规则</span>
-          <i><SvgIcon class="icon-style" iconName="arrow-right" /></i>
-        </li>
-        <li>
-          <span>超级会员权益说明</span>
-          <i><SvgIcon class="icon-style" iconName="arrow-right" /></i>
-        </li>
-        <li>
-          <span>签到规则</span>
-          <i><SvgIcon class="icon-style" iconName="arrow-right" /></i>
-        </li>
-        <li>
-          <span>超级会员权益说明</span>
-          <i><SvgIcon class="icon-style" iconName="arrow-right" /></i>
-        </li>
-        <li>
-          <span>签到规则</span>
-          <i><SvgIcon class="icon-style" iconName="arrow-right" /></i>
-        </li>
-        <li>
-          <span>超级会员权益说明</span>
-          <i><SvgIcon class="icon-style" iconName="arrow-right" /></i>
-        </li>
-        <li>
-          <span>签到规则</span>
-          <i><SvgIcon class="icon-style" iconName="arrow-right" /></i>
-        </li>
-        <li>
-          <span>超级会员权益说明</span>
-          <i><SvgIcon class="icon-style" iconName="arrow-right" /></i>
-        </li>
-        <li>
-          <span>签到规则</span>
-          <i><SvgIcon class="icon-style" iconName="arrow-right" /></i>
-        </li>
       </ul>
     </div>
 
@@ -107,19 +31,22 @@
 </template>
 
 <script>
-import Header from '../../components/header'
+import { Toast } from 'mint-ui'
+import Api from '@src/service/api'
+import Res from '@src/service/res'
+import Header from '@src/components/header'
 
 export default {
   data () {
     return {
-
+      explainList: [] // 服务列表
     }
   },
   created () {
 
   },
   mounted () {
-
+    this.initData()
   },
   components: {
     Header
@@ -128,7 +55,16 @@ export default {
 
   },
   methods: {
-
+    async initData () {
+      try {
+        let list = await Api.getExplainList()
+        Res(list, data => {
+          this.explainList = data
+        })
+      } catch (err) {
+        Toast(err.message || '服务列表获取失败')
+      }
+    }
   },
   watch: {
 
@@ -140,7 +76,9 @@ export default {
 @import url("../../../lib/style/util");
 
 .service {
-
+  .main{
+    overflow: auto;
+  }
 }
 
 .s-contact{

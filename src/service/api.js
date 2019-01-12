@@ -83,6 +83,11 @@ Api.foodList = data => fetch('/shopping/food/getList', data)
 Api.foodDetail = data => fetch('/shopping/food/detail/' + data)
 
 /**
+ * 搜索商铺
+ */
+Api.shopSearch = data => fetch('/shopping/shop/search', data)
+
+/**
  * 获取商铺详情
  */
 Api.shopDetail = data => fetch('/shopping/shop/detail/' + data)
@@ -164,11 +169,39 @@ Api.addressRemove = data => fetch('/address/removeAddress/' + data, '', 'delete'
 Api.addressDetail = data => fetch('/address/getAddress/' + data)
 
 /**
+ * 红包
+ */
+/**
+ * 获取可用红包
+ */
+Api.hongbaoUsable = data => fetch('/hongbao/getHongbaoUsable', data)
+
+/**
+ * 获取过期红包
+ */
+Api.hongbaoDue = data => fetch('/hongbao/getHongbaoDue', data)
+
+/**
+ * 获取过期红包
+ */
+Api.hongbaoExchange = data => fetch('/hongbao/exchange', data, 'post')
+
+/**
  * 其他
  */
 /**
  * 获取验证码
  */
 Api.getVerifycode = () => fetch('/sundry/verify')
+
+/**
+ * 获取常见问题
+ */
+Api.getExplainList = () => fetch('/sundry/explainList')
+
+/**
+ * 获取常见问题详情
+ */
+Api.getExplainDetail = data => fetch('/sundry/explainDetail/' + data)
 
 export default Api

@@ -6,14 +6,14 @@
       <div class="d-icon"><i><SvgIcon class="icon-style" iconName="p-elm" /></i></div>
       <p class="tac f18">下载饿了么APP</p>
       <div class="r-btn">
-        <span class="g-btn">下载</span>
+        <router-link tag="span" to="/find" class="g-btn">下载</router-link>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import Header from '../../components/header'
+import Header from '@src/components/header'
 
 export default {
   data () {

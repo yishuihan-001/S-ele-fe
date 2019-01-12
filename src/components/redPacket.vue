@@ -1,17 +1,17 @@
 <template>
-    <div :class="['redpacket', overdue ? 'overdue' : '']">
+    <div :class="['redpacket', +info.present_status === 4 ? 'overdue' : '']">
       <div class="r-left">
-        <h3>¥<span>1.0</span></h3>
-        <p>满 40 元可用</p>
+        <h3>¥<span>{{info.amount.toFixed(2)}}</span></h3>
+        <p>满 {{info.sum_condition}} 元可用</p>
       </div>
       <div class="r-right">
         <div class="rr-info">
-          <h3>分享红包</h3>
-          <p>2017-05-23到期</p>
-          <p>限收货手机号为 13681711254</p>
+          <h3>{{info.name}}</h3>
+          <p>{{info.end_date}}到期</p>
+          <p>限收货手机号为 {{info.phone}}</p>
         </div>
         <div class="rr-tip">
-          <h3>剩3日</h3>
+          <h3>剩{{Math.floor(Math.random() * 5 + 1)}}日</h3>
           <span><SvgIcon class="icon-style" iconName="overdue" /></span>
         </div>
       </div>
@@ -28,7 +28,7 @@ export default {
   created () {
 
   },
-  props: ['overdue'],
+  props: ['info'],
   mounted () {
 
   },

@@ -4,12 +4,7 @@
 
     <div class="main">
       <ul>
-        <li><RedPacket :overdue="true"/></li>
-        <li><RedPacket :overdue="true"/></li>
-        <li><RedPacket :overdue="true"/></li>
-        <li><RedPacket :overdue="true"/></li>
-        <li><RedPacket :overdue="true"/></li>
-        <li><RedPacket :overdue="true"/></li>
+        <li v-for="(item, index) in redPacketList" :key="index"><RedPacket :info="item"/></li>
       </ul>
     </div>
 
@@ -17,20 +12,23 @@
 </template>
 
 <script>
-import Header from '../../../components/header'
-import RedPacket from '../../../components/redPacket'
+import { Toast } from 'mint-ui'
+import Api from '@src/service/api'
+import Res from '@src/service/res'
+import Header from '@src/components/header'
+import RedPacket from '@src/components/redPacket'
 
 export default {
   data () {
     return {
-      showRedPacket: true
+      redPacketList: [] // 红包列表
     }
   },
   created () {
 
   },
   mounted () {
-
+    this.initData()
   },
   components: {
     Header,
@@ -40,7 +38,16 @@ export default {
 
   },
   methods: {
-
+    async initData () {
+      try {
+        let list = await Api.hongbaoDue({ offset: 0, limit: 20 })
+        Res(list, data => {
+          this.redPacketList = data
+        })
+      } catch (err) {
+        Toast(err.message || '获取红包列表失败')
+      }
+    }
   },
   watch: {
 
@@ -53,6 +60,9 @@ export default {
 
 .hbHistory {
   z-index: 9;
+  .main{
+    overflow: auto;
+  }
 }
 
 ul{

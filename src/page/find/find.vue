@@ -3,13 +3,13 @@
     <Header back="true" title="发现" noRight="true"/>
 
     <div class="main">
-      <h1>发现</h1>
+      <h1>没藏好，被你发现了^_^</h1>
     </div>
   </div>
 </template>
 
 <script>
-import Header from '../../components/header'
+import Header from '@src/components/header'
 
 export default {
   data () {

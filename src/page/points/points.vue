@@ -12,9 +12,9 @@
               <em>积分说明</em>
             </router-link>
           </h3>
-          <p><span class="f30 fwb">0</span>分</p>
+          <p><span class="f30 fwb">{{pointNum}}</span>积分</p>
           <div class="r-btn bf">
-            <span class="g-btn">积分兑换商品</span>
+            <span class="g-btn" @click="exchange">积分兑换商品</span>
           </div>
         </div>
       </div>
@@ -36,16 +36,18 @@
 </template>
 
 <script>
-import Header from '../../components/header'
+import { Toast } from 'mint-ui'
+import Util from '@lib/js/util'
+import Header from '@src/components/header'
 
 export default {
   data () {
     return {
-
+      pointNum: 998 // 积分
     }
   },
   created () {
-
+    this.pointNum = Number(Util.getQueryString(window.location.href, 'num'))
   },
   mounted () {
 
@@ -57,7 +59,13 @@ export default {
 
   },
   methods: {
-
+    // 兑换商品
+    exchange () {
+      if (this.pointNum <= 100) {
+        return Toast('大于100积分才能兑换商品哦')
+      }
+      Toast('您暂不具备兑换资格')
+    }
   },
   watch: {
 

@@ -31,24 +31,24 @@ const search = r => require.ensure([], () => r(require('../page/search/search'))
 /* A */ const forget = r => require.ensure([], () => r(require('../page/forget/forget')), 'forget')
 /* A */ const order = r => require.ensure([], () => r(require('../page/order/order')), 'order')
 /* A */ const orderDetail = r => require.ensure([], () => r(require('../page/order/children/orderDetail')), 'orderDetail')
-const vipcard = r => require.ensure([], () => r(require('../page/vipcard/vipcard')), 'vipcard')
-const invoiceRecord = r => require.ensure([], () => r(require('../page/vipcard/children/invoiceRecord')), 'invoiceRecord')
-const useCart = r => require.ensure([], () => r(require('../page/vipcard/children/useCart')), 'useCart')
-const vipDescription = r => require.ensure([], () => r(require('../page/vipcard/children/vipDescription')), 'vipDescription')
-const find = r => require.ensure([], () => r(require('../page/find/find')), 'find')
-const download = r => require.ensure([], () => r(require('../page/download/download')), 'download')
-const service = r => require.ensure([], () => r(require('../page/service/service')), 'service')
-const questionDetail = r => require.ensure([], () => r(require('../page/service/children/questionDetail')), 'questionDetail')
-const balance = r => require.ensure([], () => r(require('../page/balance/balance')), 'balance')
-const balanceDetail = r => require.ensure([], () => r(require('../page/balance/children/balanceDetail')), 'balanceDetail')
-const benefit = r => require.ensure([], () => r(require('../page/benefit/benefit')), 'benefit')
-const coupon = r => require.ensure([], () => r(require('../page/benefit/children/coupon')), 'coupon')
-const hbDescription = r => require.ensure([], () => r(require('../page/benefit/children/hbDescription')), 'hbDescription')
-const hbHistory = r => require.ensure([], () => r(require('../page/benefit/children/hbHistory')), 'hbHistory')
-const exchange = r => require.ensure([], () => r(require('../page/benefit/children/exchange')), 'exchange')
-const commend = r => require.ensure([], () => r(require('../page/benefit/children/commend')), 'commend')
-const points = r => require.ensure([], () => r(require('../page/points/points')), 'points')
-const pointsDetail = r => require.ensure([], () => r(require('../page/points/children/pointsDetail')), 'pointsDetail')
+/* A */ const vipcard = r => require.ensure([], () => r(require('../page/vipcard/vipcard')), 'vipcard')
+/* A */ const invoiceRecord = r => require.ensure([], () => r(require('../page/vipcard/children/invoiceRecord')), 'invoiceRecord')
+/* A */ const useCart = r => require.ensure([], () => r(require('../page/vipcard/children/useCart')), 'useCart')
+/* A */ const vipDescription = r => require.ensure([], () => r(require('../page/vipcard/children/vipDescription')), 'vipDescription')
+/* A */ const find = r => require.ensure([], () => r(require('../page/find/find')), 'find')
+/* A */ const download = r => require.ensure([], () => r(require('../page/download/download')), 'download')
+/* A */ const service = r => require.ensure([], () => r(require('../page/service/service')), 'service')
+/* A */ const questionDetail = r => require.ensure([], () => r(require('../page/service/children/questionDetail')), 'questionDetail')
+/* A */ const balance = r => require.ensure([], () => r(require('../page/balance/balance')), 'balance')
+/* A */ const balanceDetail = r => require.ensure([], () => r(require('../page/balance/children/balanceDetail')), 'balanceDetail')
+/* A */ const benefit = r => require.ensure([], () => r(require('../page/benefit/benefit')), 'benefit')
+/* A */ const coupon = r => require.ensure([], () => r(require('../page/benefit/children/coupon')), 'coupon')
+/* A */ const hbDescription = r => require.ensure([], () => r(require('../page/benefit/children/hbDescription')), 'hbDescription')
+/* A */ const hbHistory = r => require.ensure([], () => r(require('../page/benefit/children/hbHistory')), 'hbHistory')
+/* A */ const exchange = r => require.ensure([], () => r(require('../page/benefit/children/exchange')), 'exchange')
+/* A */ const commend = r => require.ensure([], () => r(require('../page/benefit/children/commend')), 'commend')
+/* A */ const points = r => require.ensure([], () => r(require('../page/points/points')), 'points')
+/* A */ const pointsDetail = r => require.ensure([], () => r(require('../page/points/children/pointsDetail')), 'pointsDetail')
 
 const routes = [
   // 地址为空时跳转home页面
@@ -232,7 +232,7 @@ const routes = [
     component: service,
     children: [
       {
-        path: 'questionDetail', // 问题详情
+        path: 'questionDetail/:id', // 问题详情
         component: questionDetail
       }
     ]

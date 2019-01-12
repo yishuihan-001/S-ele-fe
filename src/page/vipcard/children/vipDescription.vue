@@ -61,6 +61,9 @@ export default {
 
 .vipDescription {
   z-index: 9;
+  .main{
+    overflow: auto;
+  }
 }
 .main{
   background: #ffffff!important

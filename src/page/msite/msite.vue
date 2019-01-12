@@ -120,14 +120,13 @@ export default {
           }
           this.shopCategoryList = arr
         })
-
         // 获取商铺列表
         if (this.cityAddress) {
           this.latitude = this.cityAddress.location.lat
           this.longitude = this.cityAddress.location.lng
         } else if (this.currCity) {
-          this.latitude = this.cityAddress.location.latitude
-          this.longitude = this.cityAddress.location.longitude
+          this.latitude = this.currCity.latitude
+          this.longitude = this.currCity.longitude
         } else {
           let res1 = await Api.getCity({ type: 'guess' })
           Res(res1, data => {

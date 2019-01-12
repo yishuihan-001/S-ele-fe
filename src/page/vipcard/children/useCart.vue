@@ -4,17 +4,17 @@
 
     <div class="main">
       <div class="u-title">
-        <p>成功兑换后将关联到当前帐号： <span class="fwb">1500000000</span></p>
-        <!-- <p>登录后才能兑换会员哦~</p> -->
+        <p v-if="userInfo">成功兑换后将关联到当前帐号： <span class="fwb">{{userInfo.username}}</span></p>
+        <p v-else>登录后才能兑换会员哦~</p>
       </div>
 
       <div class="u-info">
-        <input type="text" placeholder="请输入10位卡号">
-        <input type="password" placeholder="请输入6位卡密">
+        <input type="text" placeholder="请输入10位卡号" v-model="cardNum">
+        <input type="password" placeholder="请输入6位卡密" v-model="cardPassword">
       </div>
 
       <div class="r-btn">
-        <span class="g-btn">兑换</span>
+        <span class="g-btn" @click="exchange">兑换</span>
       </div>
 
       <div class="u-tip">
@@ -31,12 +31,16 @@
 </template>
 
 <script>
-import Header from '../../../components/header'
+import { mapState } from 'vuex'
+import { Toast } from 'mint-ui'
+import Va from '@lib/js/validator'
+import Header from '@src/components/header'
 
 export default {
   data () {
     return {
-
+      cardNum: '', // 卡号
+      cardPassword: '' // 卡密
     }
   },
   created () {
@@ -49,10 +53,32 @@ export default {
     Header
   },
   computed: {
-
+    ...mapState(['userInfo'])
   },
   methods: {
-
+    // 兑换会员
+    exchange () {
+      try {
+        let va = new Va()
+        va.add(this.cardNum, [{ rule: 'isEmpty', msg: '卡号不能为空' }, { rule: 'minLength:10', msg: '卡号只能是10位数哦' }, { rule: 'maxLength:10', msg: '卡号只能是10位数哦' }])
+        va.add(this.cardPassword, [{ rule: 'isEmpty', msg: '卡密不能为空' }, { rule: 'minLength:6', msg: '卡密只能是6位数哦' }, { rule: 'maxLength:6', msg: '卡密只能是6位数哦' }])
+        let vaResult = va.start()
+        if (vaResult) {
+          throw new Error(vaResult)
+        }
+        let flag = Math.floor(Math.random() * 20 + 1) % 2 === 0
+        if (flag) {
+          Toast('兑换成功')
+          setTimeout(() => {
+            this.$router.back()
+          }, 2000)
+        } else {
+          throw new Error('您输入的卡号或卡密有误')
+        }
+      } catch (err) {
+        Toast(err.message || '兑换失败')
+      }
+    }
   },
   watch: {
 
@@ -91,7 +117,7 @@ export default {
   padding: 0.2rem 0.1rem;
   span{
     .hlh(0.4rem);
-    .bg(#ccc);
+    .bg(@c-green);
     .border(solid, #ccc, 1px);
   }
 }

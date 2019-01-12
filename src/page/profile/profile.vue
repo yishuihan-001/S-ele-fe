@@ -13,16 +13,16 @@
       </router-link>
 
       <div class="p-info bf">
-        <div @click="goTarget('/balance', true)">
-          <h3><span>{{userInfo ? (Math.random() * 100).toFixed(2) : '0.00'}}</span>元</h3>
+        <div @click="goTarget('/balance?num=' + myBalance, true)">
+          <h3><span>{{userInfo ? myBalance : '0.00'}}</span>元</h3>
           <p>我的余额</p>
         </div>
         <div @click="goTarget('/benefit', true)">
-          <h3><span>{{userInfo ? Math.floor(Math.random() * 100 ): 0}}</span>个</h3>
+          <h3><span>{{userInfo ? Math.floor(Math.random() * 10) : 0}}</span>个</h3>
           <p>我的优惠</p>
         </div>
-        <div @click="goTarget('/points', true)">
-          <h3><span>{{userInfo ? Math.floor(Math.random() * 1000 ): 0}}</span>分</h3>
+        <div @click="goTarget('/points?num=' + myPoint, true)">
+          <h3><span>{{userInfo ? myPoint: 0}}</span>分</h3>
           <p>我的积分</p>
         </div>
       </div>
@@ -70,7 +70,8 @@ import Footer from '@src/components/footer'
 export default {
   data () {
     return {
-
+      myBalance: (Math.random() * 80).toFixed(2), // 余额
+      myPoint: Math.floor(Math.random() * 120) // 积分
     }
   },
   created () {

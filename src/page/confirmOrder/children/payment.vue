@@ -8,7 +8,7 @@
         <p class="f30 fwb">{{showTime}}</p>
       </div>
       <div class="p-time bf tac" v-else>
-        <h2 class="f24 fwb">未及时支付，订单已失效</h2>
+        <h2 class="f24 fwb">{{showText}}</h2>
       </div>
 
       <div class="p-type bf">
@@ -58,7 +58,8 @@ export default {
       efficacy: false, // 订单有效
       showTime: '', // 倒计时显示时间
       qrcode: null, // 二维码
-      showShadow: false // 支付遮罩
+      showShadow: false, // 支付遮罩
+      showText: '未及时支付，订单已失效' // 显示文案
     }
   },
   created () {
@@ -79,6 +80,12 @@ export default {
         if (Ju.isEmpty(this.orderId)) {
           throw new Error('订单id参数错误')
         }
+        // 购买会员卡
+        if (this.orderId === 'hy') {
+          this.showText = '未及时支付，购买失败'
+          return this.countDownTime(new Date().getTime() + 15 * 60 * 1000)
+        }
+        // 支付订单
         let orderInfo = await Api.orderDetail(this.orderId)
         Res(orderInfo, data => {
           this.countDownTime(data.due_time)

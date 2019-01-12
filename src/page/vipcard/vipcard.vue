@@ -4,8 +4,8 @@
 
     <div class="main">
       <div class="v-title">
-        <p>为账户<span class="fwb">1500000000</span>购买会员</p>
-        <!-- <p>登录后才能购买会员哦~</p> -->
+        <p v-if="userInfo">为账号<span class="fwb">{{userInfo.username}}</span>购买会员</p>
+        <p v-else>登录后才能购买会员哦~</p>
       </div>
 
       <div class="v-explain bf">
@@ -33,7 +33,8 @@
 
       <div class="v-buyVip bf">
         <h3>开通会员</h3>
-        <p><span>1个月<em>¥20</em></span><dfn>购买</dfn></p>
+        <p><span>1个月<em>¥20</em></span><router-link tag="dfn" to="/confirmOrder/payment/hy">购买</router-link></p>
+        <!-- this.$router.push('' + data) -->
       </div>
 
       <router-link tag="h3" to="/vipcard/useCart"  class="ve-title ve-other">
@@ -54,7 +55,8 @@
 </template>
 
 <script>
-import Header from '../../components/header'
+import { mapState } from 'vuex'
+import Header from '@src/components/header'
 
 export default {
   data () {
@@ -72,7 +74,7 @@ export default {
     Header
   },
   computed: {
-
+    ...mapState(['userInfo'])
   },
   methods: {
 
