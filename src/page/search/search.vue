@@ -148,9 +148,19 @@ export default {
 
     // 删除该条
     removeItem (key) {
-      /**
-       * 明天做
-       */
+      let historyList = this.shopHistory
+      if (historyList.length === 1) {
+        historyList = []
+      } else {
+        let index = 0
+        historyList.forEach((it, id) => {
+          if (it === key) {
+            index = id
+          }
+        })
+        historyList.splice(index, 1)
+      }
+      Util.setStore('shopHistory', historyList)
     }
   },
   watch: {

@@ -7,7 +7,7 @@
         <span><img :src="$store.state.placeholderImg" alt=""></span>
         <div>
           <p class="f18 fwb">{{userInfo ? userInfo.username : '登录/注册'}}</p>
-          <p><i><SvgIcon class="icon-style" iconName="phone" /></i>暂无绑定手机号</p>
+          <p><i><SvgIcon class="icon-style" iconName="phone" /></i>{{userInfo && userInfo.phone ? userInfo.phone : '暂无绑定手机号'}}</p>
         </div>
         <i><SvgIcon class="icon-style" iconName="arrow-right-white" /></i>
       </router-link>
@@ -32,7 +32,7 @@
           <div><i><SvgIcon class="icon-style" iconName="p-order" /></i>我的订单</div>
           <span><SvgIcon class="icon-style" iconName="arrow-right" /></span>
         </li>
-        <li @click="goTarget('/points')">
+        <li @click="goTarget('/points', true)">
           <div><i><SvgIcon class="icon-style" iconName="p-score" /></i>积分商城</div>
           <span><SvgIcon class="icon-style" iconName="arrow-right" /></span>
         </li>
